@@ -13,6 +13,7 @@ class Provider(Base):
     __tablename__ = "providers"
      
     id = Column(BigInteger, primary_key=True, index=True)
+    gl_account_id = Column(BigInteger, default=0)
     name = Column(String, nullable=True)
     description = Column(Text, nullable=True)
     code = Column(String, nullable=True)
@@ -22,8 +23,8 @@ class Provider(Base):
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
 
-def create_provider(db: Session, name: str = None, description: str = None, code: str = None, status: int = 0, commit: bool=False):
-    provider = Provider(name=name, description=description, code=code, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_provider(db: Session, gl_account_id: int = 0, name: str = None, description: str = None, code: str = None, status: int = 0, commit: bool=False):
+    provider = Provider(gl_account_id=gl_account_id, name=name, description=description, code=code, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(provider)
     if commit == False:
         db.flush()
@@ -69,3 +70,6 @@ def get_single_provider_by_code(db: Session, code: str=None):
 
 def get_providers(db: Session):
     return db.query(Provider).order_by(desc(Provider.created_at))
+
+def check_provider_exist(db: Session, code: str=None):
+    return db.query(Provider).filter_by(code = code).count()

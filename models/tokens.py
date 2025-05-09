@@ -108,3 +108,6 @@ def get_latest_user_token_by_type(db: Session, user_id: int = 0, token_type: str
 
 def get_latest_user_token_by_type_and_status(db: Session, user_id: int = 0, token_type: str = None, status: int = 0):
     return db.query(Token).filter(and_(Token.user_id == user_id, Token.token_type == token_type, Token.status == status, Token.deleted_at == None)).order_by(desc(Token.id)).first()
+
+def get_latest_user_token_by_email_and_status(db: Session, email: str = None, token_type: str = None, status: int = 0):
+    return db.query(Token).filter(and_(Token.email == email, Token.token_type == token_type, Token.status == status, Token.deleted_at == None)).order_by(desc(Token.id)).first()

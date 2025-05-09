@@ -26,17 +26,23 @@ class Person(Base):
     bio = Column(Text, nullable=True)
     avatar = Column(Text, nullable=True)
     nationality = Column(String, nullable=True)
+    occupation = Column(String, nullable=True)
+    shareholding = Column(String, nullable=True)
     id_document_file = Column(Text, nullable=True)
     id_document_type = Column(String, nullable=True)
     id_document_value = Column(String, nullable=True)
+    id_issuance_date = Column(String, nullable=True)
+    id_expiration_date = Column(String, nullable=True)
+    politically_exposed = Column(SmallInteger, default=0)
+    meta_data = Column(Text, nullable=True)
     status = Column(SmallInteger, default=0)
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
 
-def create_person(db: Session, personable_type: str = None, personable_id: int = 0, person_type: str = None, first_name: str = None, other_name: str = None, last_name: str = None,  mothers_maiden_name: str = None, date_of_birth: str = None, gender: str = None, marital_status: str = None, bio: str = None, avatar: str = None, nationality: str = None, id_document_file: str = None, id_document_type: str = None, id_document_value: str = None, status: int = 0, commit: bool=False):
-    person = Person(personable_type=personable_type, personable_id=personable_id, person_type=person_type, first_name=first_name, other_name=other_name, last_name=last_name, mothers_maiden_name=mothers_maiden_name, date_of_birth=date_of_birth, gender=gender, marital_status=marital_status, bio=bio, avatar=avatar, nationality=nationality, id_document_file=id_document_file, id_document_type=id_document_type, id_document_value=id_document_value, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_person(db: Session, personable_type: str = None, personable_id: int = 0, person_type: str = None, first_name: str = None, other_name: str = None, last_name: str = None,  mothers_maiden_name: str = None, date_of_birth: str = None, gender: str = None, marital_status: str = None, bio: str = None, avatar: str = None, nationality: str = None, occupation: str = None, id_document_file: str = None, id_document_type: str = None, id_document_value: str = None, id_issuance_date: str = None, id_expiration_date: str = None, politically_exposed: int = 0, meta_data: str = None, status: int = 0, commit: bool=False):
+    person = Person(personable_type=personable_type, personable_id=personable_id, person_type=person_type, first_name=first_name, other_name=other_name, last_name=last_name, mothers_maiden_name=mothers_maiden_name, date_of_birth=date_of_birth, gender=gender, marital_status=marital_status, bio=bio, avatar=avatar, nationality=nationality, occupation=occupation, id_document_file=id_document_file, id_document_type=id_document_type, id_document_value=id_document_value, id_issuance_date=id_issuance_date, id_expiration_date=id_expiration_date, politically_exposed=politically_exposed, meta_data=meta_data, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(person)
     if commit == False:
         db.flush()

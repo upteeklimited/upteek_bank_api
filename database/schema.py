@@ -1,4 +1,8 @@
-from schemas.auth import LoginEmailRequest, SendEmailTokenRequest, FinalisePasswordLessRequest, VerifyEmailTokenRequest
-from schemas.pro import UpdateBasicProfileRequestModel, UpdatePasswordRequestModel, UpdateSettingsRequestModel
+from schemas.auth import RegisterRequest, LoginEmailRequest, SendEmailTokenRequest, FinalisePasswordLessRequest, VerifyEmailTokenRequest, CheckPhoneNumberRequest, CheckUsernameRequest, CheckEmailRequest, SSORequest
+from schemas.fil import MediumModel, UpdateMediumRequest, MediaResponse, MediaListResponse
+from schemas.inv import CreateCategoryRequest, UpdateCategoryRequest, CategoryModel, CategoryResponse, CreateGroupRequest, UpdateGroupRequest, GroupModel, GroupResponse, ProductModel, ProductFieldModel, UpdateMultiProductRequest, UpdateDiverseProductRequest, ProductResponseModel, MiniProductResponseModel
+from schemas.misc import CountryModel, CountryResponseModel, CurrencyModel, CurrencyResponseModel, StateModel, StateResponseModel, CityModel, CityResponseModel, LGAModel, LGAResponseModel, MerchantIndustryModel, MerchantIndustryResponseModel, MerchantCategoryModel, MerchantCategoryResponseModel
+from schemas.ord import OrderedProductModel, CreateOrderRequest, OrderModel, OrderMainModel, NewOrderResponse, OrderResponse
+from schemas.pro import UpdateBasicProfileRequestModel, parse_update_basic_profile_payload, UpdatePasswordRequestModel, UpdateSettingsRequestModel, UpdateAddressRequestModel, SmileIDPayloadRequestModel, SmileIDGenerateWebTokenRequestModel, SmileIDWebTokenResponse, SmileIDComplainceFinaliseResponse, SmileIDMerchantComplainceFinaliseResponse
 from schemas.resp import ErrorResponse, PlainResponse, PlainResponseData
-from schemas.user import AuthResponseModel, MainAuthResponseModel, UserDetailsResponseModel, UserResponseModel
+from schemas.user import MerchantModel, AuthResponseModel, MainAuthResponseModel, UserDetailsResponseModel, UserResponseModel

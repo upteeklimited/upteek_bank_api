@@ -13,8 +13,8 @@ class ProductCategory(Base):
     __tablename__ = "products_categories"
      
     id = Column(BigInteger, primary_key=True, index=True)
-    category_id = Column(BigInteger, default=0)
-    product_id = Column(BigInteger, default=0)
+    category_id = Column(BigInteger, ForeignKey('categories.id'))
+    product_id = Column(BigInteger, ForeignKey('products.id'))
     meta_data = Column(Text, nullable=True)
     status = Column(SmallInteger, default=0)
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
@@ -60,6 +60,14 @@ def force_delete_product_category(db: Session, id: int=0, commit: bool=False):
         db.commit()
     return True
 
+def remove_product_category(db: Session, product_id: int = 0, category_id: int = 0, commit: bool=False):
+    db.query(ProductCategory).filter(and_(ProductCategory.product_id == product_id, ProductCategory.category_id == category_id)).delete()
+    if commit == False:
+        db.flush()
+    else:
+        db.commit()
+    return True
+
 def get_all_products_categories(db: Session, filters: Dict={}):
     query = db.query(ProductCategory)
     if 'category_id' in filters:
@@ -68,3 +76,5 @@ def get_all_products_categories(db: Session, filters: Dict={}):
         query = query.filter_by(product_id = filters['product_id'])
     return query.order_by(desc(ProductCategory.created_at))
 
+def count_product_category(db: Session, product_id: int = 0, category_id: int = 0):
+    return db.query(ProductCategory).filter(and_(ProductCategory.product_id == product_id, ProductCategory.category_id == category_id)).count()

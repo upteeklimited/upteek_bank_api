@@ -70,6 +70,12 @@ def force_delete_general_ledger_account(db: Session, id: int=0, commit: bool=Fal
 def get_single_general_ledger_account_by_id(db: Session, id: int=0):
     return db.query(GeneralLedgerAccount).filter_by(id = id).first()
 
+def get_single_general_ledger_account_by_account_number(db: Session, account_number: str = None):
+    return db.query(GeneralLedgerAccount).filter_by(account_number = account_number).first()
+
+def get_last_general_ledger_account(db: Session):
+    return db.query(GeneralLedgerAccount).order_by(desc(GeneralLedgerAccount.id)).first()
+
 def get_general_ledger_accounts(db: Session, filters: Dict={}):
     query = db.query(GeneralLedgerAccount)
     if 'type_id' in filters:

@@ -31,12 +31,12 @@ class FinancialProduct(Base):
     product_type = Column(Integer, default=0)
     user_type = Column(Integer, default=0)
     individual_compliance_type = Column(Integer, default=0)
-    merchant_complaince_type = Column(Integer, default=0)
+    merchant_compliance_type = Column(Integer, default=0)
     interest_rate = Column(Float, default=0)
     overdrawn_interest_rate = Column(Float, default=0)
     charge_if_overdrawn = Column(Float, default=0)
     charges = Column(Float, default=0)
-    COT_rate = Column(Float, default=0)
+    cot_rate = Column(Float, default=0)
     minimum_amount = Column(Float, default=0)
     maximum_amount = Column(Float, default=0)
     liquidation_penalty = Column(Float, default=0)
@@ -51,8 +51,8 @@ class FinancialProduct(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_financial_product(db: Session, country_id: int = 0, currency_id: int = 0, gl_id: int = 0, interest_expense_gl_id: int = 0, interest_income_gl_id: int = 0, principal_unpaid_gl_id: int = 0, interest_unearned_gl_id: int = 0, fixed_charge_gl_id: int = 0, insurance_holding_gl_id: int = 0, overdrawn_interest_gl_id: int = 0, liability_overdraft_gl_id: int = 0, interest_receivable_gl_id: int = 0, interest_payable_gl_id: int = 0, name: str = None, description: str = None, product_type: int = 0, user_type: int = 0, individual_compliance_type: int = 0, merchant_complaince_type: int = 0, interest_rate: float = 0, overdrawn_interest_rate: float = 0, charge_if_overdrawn: float = 0, charges: float = 0, COT_rate: float = 0, minimum_amount: float = 0, maximum_amount: float = 0, liquidation_penalty: float = 0, tenure: int = 0, guarantor_requirement: int = 0, amount_to_require_guarantor: float = 0, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
-    financial_product = FinancialProduct(country_id=country_id, currency_id=currency_id, gl_id=gl_id, interest_expense_gl_id=interest_expense_gl_id, interest_income_gl_id=interest_income_gl_id, principal_unpaid_gl_id=principal_unpaid_gl_id, interest_unearned_gl_id=interest_unearned_gl_id, fixed_charge_gl_id=fixed_charge_gl_id, insurance_holding_gl_id=insurance_holding_gl_id, overdrawn_interest_gl_id=overdrawn_interest_gl_id, liability_overdraft_gl_id=liability_overdraft_gl_id, interest_receivable_gl_id=interest_receivable_gl_id, interest_payable_gl_id=interest_payable_gl_id, name=name, description=description, product_type=product_type, user_type=user_type, individual_compliance_type=individual_compliance_type, merchant_complaince_type=merchant_complaince_type, interest_rate=interest_rate, overdrawn_interest_rate=overdrawn_interest_rate, charge_if_overdrawn=charge_if_overdrawn, charges=charges, COT_rate=COT_rate, minimum_amount=minimum_amount, maximum_amount=maximum_amount, liquidation_penalty=liquidation_penalty, tenure=tenure, guarantor_requirement=guarantor_requirement, amount_to_require_guarantor=amount_to_require_guarantor, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_financial_product(db: Session, country_id: int = 0, currency_id: int = 0, gl_id: int = 0, interest_expense_gl_id: int = 0, interest_income_gl_id: int = 0, principal_unpaid_gl_id: int = 0, interest_unearned_gl_id: int = 0, fixed_charge_gl_id: int = 0, insurance_holding_gl_id: int = 0, overdrawn_interest_gl_id: int = 0, liability_overdraft_gl_id: int = 0, interest_receivable_gl_id: int = 0, interest_payable_gl_id: int = 0, name: str = None, description: str = None, product_type: int = 0, user_type: int = 0, individual_compliance_type: int = 0, merchant_compliance_type: int = 0, interest_rate: float = 0, overdrawn_interest_rate: float = 0, charge_if_overdrawn: float = 0, charges: float = 0, cot_rate: float = 0, minimum_amount: float = 0, maximum_amount: float = 0, liquidation_penalty: float = 0, tenure: int = 0, guarantor_requirement: int = 0, amount_to_require_guarantor: float = 0, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
+    financial_product = FinancialProduct(country_id=country_id, currency_id=currency_id, gl_id=gl_id, interest_expense_gl_id=interest_expense_gl_id, interest_income_gl_id=interest_income_gl_id, principal_unpaid_gl_id=principal_unpaid_gl_id, interest_unearned_gl_id=interest_unearned_gl_id, fixed_charge_gl_id=fixed_charge_gl_id, insurance_holding_gl_id=insurance_holding_gl_id, overdrawn_interest_gl_id=overdrawn_interest_gl_id, liability_overdraft_gl_id=liability_overdraft_gl_id, interest_receivable_gl_id=interest_receivable_gl_id, interest_payable_gl_id=interest_payable_gl_id, name=name, description=description, product_type=product_type, user_type=user_type, individual_compliance_type=individual_compliance_type, merchant_compliance_type=merchant_compliance_type, interest_rate=interest_rate, overdrawn_interest_rate=overdrawn_interest_rate, charge_if_overdrawn=charge_if_overdrawn, charges=charges, cot_rate=cot_rate, minimum_amount=minimum_amount, maximum_amount=maximum_amount, liquidation_penalty=liquidation_penalty, tenure=tenure, guarantor_requirement=guarantor_requirement, amount_to_require_guarantor=amount_to_require_guarantor, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(financial_product)
     if commit == False:
         db.flush()
@@ -105,8 +105,8 @@ def get_financial_products(db: Session, filters: Dict={}):
         query = query.filter_by(user_type = filters['user_type'])
     if 'individual_compliance_type' in filters:
         query = query.filter_by(individual_compliance_type = filters['individual_compliance_type'])
-    if 'merchant_complaince_type' in filters:
-        query = query.filter_by(merchant_complaince_type = filters['merchant_complaince_type'])
+    if 'merchant_compliance_type' in filters:
+        query = query.filter_by(merchant_compliance_type = filters['merchant_compliance_type'])
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     if 'name' in filters:

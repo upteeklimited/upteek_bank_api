@@ -17,6 +17,7 @@ class Category(Base):
     category_id = Column(BigInteger, default=0)
     name = Column(String, nullable=True)
     description = Column(Text, nullable=True)
+    slug = Column(String, nullable=True)
     status = Column(SmallInteger, default=0)
     created_by = Column(BigInteger, default=0)
     authorized_by = Column(BigInteger, default=0)
@@ -25,8 +26,10 @@ class Category(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_category(db: Session, merchant_id: int = 0, category_id: int = 0, name: str = None, description: str = None, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
-    category = Category(merchant_id=merchant_id, category_id=category_id, name=name, description=description, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+    products = relationship("Product", secondary="products_categories", back_populates="categories")
+
+def create_category(db: Session, merchant_id: int = 0, category_id: int = 0, name: str = None, description: str = None, slug: str = None, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
+    category = Category(merchant_id=merchant_id, category_id=category_id, name=name, description=description, slug=slug, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(category)
     if commit == False:
         db.flush()
@@ -67,6 +70,9 @@ def force_delete_category(db: Session, id: int=0, commit: bool=False):
 def get_single_category_by_id(db: Session, id: int=0):
     return db.query(Category).filter_by(id = id).first()
 
+def get_single_category_by_slug(db: Session, slug: str=None):
+    return db.query(Category).filter_by(slug = slug).first()
+
 def get_categories(db: Session, filters: Dict={}):
     query = db.query(Category)
     if 'merchant_id' in filters:
@@ -75,6 +81,8 @@ def get_categories(db: Session, filters: Dict={}):
         query = query.filter_by(category_id = filters['category_id'])
     if 'name' in filters:
         query = query.filter(Category.name.like('%' + filters['name'] + '%'))
+    if 'slug' in filters:
+        query = query.filter(Category.slug.like('%' + filters['slug'] + '%'))
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     if 'created_by' in filters:

@@ -20,7 +20,6 @@ class Account(Base):
     account_number = Column(String, nullable=True)
     nuban = Column(String, nullable=True)
     provider = Column(String, nullable=True)
-    proviexternal_referenceder = Column(String, nullable=True)
     available_balance = Column(Float, default=0)
     ledger_balance = Column(Float, default=0)
     sms_notification = Column(SmallInteger, default=0)
@@ -34,8 +33,8 @@ class Account(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_account(db: Session, account_type_id: int = 0, user_id: int = 0, merchant_id: int = 0, account_name: str = None, account_number: str = None, nuban: str = None, provider: str = None, proviexternal_referenceder: str = None, available_balance: float = 0, ledger_balance: float = 0, sms_notification: int = 0, email_notification: int = 0, is_primary: int = 0, manager_id: int = 0, last_active_at: str = None, status: int = 0, meta_data: str = None, deleted_at: str = None, commit: bool=False):
-    account = Account(account_type_id=account_type_id, user_id=user_id, merchant_id=merchant_id, account_name=account_name, account_number=account_number, nuban=nuban, provider=provider, proviexternal_referenceder=proviexternal_referenceder, available_balance=available_balance, ledger_balance=ledger_balance, sms_notification=sms_notification, email_notification=email_notification, is_primary=is_primary, manager_id=manager_id, last_active_at=last_active_at, status=status, meta_data=meta_data, deleted_at=deleted_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_account(db: Session, account_type_id: int = 0, user_id: int = 0, merchant_id: int = 0, account_name: str = None, account_number: str = None, nuban: str = None, provider: str = None, available_balance: float = 0, ledger_balance: float = 0, sms_notification: int = 0, email_notification: int = 0, is_primary: int = 0, manager_id: int = 0, last_active_at: str = None, status: int = 0, meta_data: str = None, deleted_at: str = None, commit: bool=False):
+    account = Account(account_type_id=account_type_id, user_id=user_id, merchant_id=merchant_id, account_name=account_name, account_number=account_number, nuban=nuban, provider=provider, available_balance=available_balance, ledger_balance=ledger_balance, sms_notification=sms_notification, email_notification=email_notification, is_primary=is_primary, manager_id=manager_id, last_active_at=last_active_at, status=status, meta_data=meta_data, deleted_at=deleted_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(account)
     if commit == False:
         db.flush()
@@ -75,6 +74,12 @@ def force_delete_account(db: Session, id: int=0, commit: bool=False):
 
 def get_single_account_by_id(db: Session, id: int=0):
     return db.query(Account).filter_by(id = id).first()
+
+def get_last_account(db: Session):
+    return db.query(Account).order_by(desc(Account.id)).first()
+
+def get_single_user_primary_account(db: Session, user_id: int=0):
+    return db.query(Account).filter_by(user_id = user_id, is_primary = 1).first()
 
 def get_accounts(db: Session, filters: Dict={}):
     query = db.query(Account)

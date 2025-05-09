@@ -16,6 +16,7 @@ import pkgutil
 import inspect
 import models
 import traceback
+import re
 
 config = load_env_config()
 
@@ -47,6 +48,12 @@ def generate_basic_reference(rand_size: int=10):
     ts = datetime.timestamp(dt)
     ts = int(ts)
     return rand_upper_string_generator(size=rand_size) + "_" + str(ts)
+
+def generate_order_reference():
+    dt = datetime.now()
+    ts = datetime.timestamp(dt)
+    ts = int(ts)
+    return "#UPORD_" + str(ts)
 
 def process_schema_dictionary(info: Dict={}):
     if bool(info) == False:
@@ -186,3 +193,73 @@ def truncate_all_tables(db: Session):
 #             "status": "error", 
 #             "message": str(e)
 #         }
+
+def generate_product_sku(prefix: str=None, last_id: int=0):
+    return f"{prefix.upper()}-{str(last_id + 1).zfill(10)}"
+
+def generate_product_random_sku(length: int=8):
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+
+def generate_slug(text: str=None):
+    """
+    Generate a slug from a string by converting to lowercase, replacing spaces and
+    special characters with hyphens, and removing non-alphanumeric characters.
+    
+    Args:
+        text (str): The input string to convert to a slug.
+        
+    Returns:
+        str: The generated slug.
+    """
+    if text is None:
+        return None
+    else:
+        # Convert to lowercase and strip whitespace
+        text = text.lower().strip()
+        # Replace spaces and special characters with hyphens
+        text = re.sub(r'[\s+]', '-', text)
+        # Remove all non-alphanumeric characters except hyphens
+        text = re.sub(r'[^a-z0-9\-]', '', text)
+        # Remove consecutive hyphens
+        text = re.sub(r'-+', '-', text)
+        # Remove leading/trailing hyphens
+        text = text.strip('-')
+        return text if text else 'slug'
+
+def comma_to_list(text: str=None):
+    """
+    Convert a comma-separated string to a list, stripping whitespace from each item.
+    
+    Args:
+        text (str): The comma-separated string to convert.
+        
+    Returns:
+        list: A list of strings from the input.
+    """
+    # Split by comma and strip whitespace from each item
+    if text is None:
+        return []
+    else:
+        return [item.strip() for item in text.split(',') if item.strip()]
+
+
+def parse_float(string_val: str=None):
+    if string_val is None:
+        return 0
+    try:
+        return float(string_val)
+    except ValueError:
+        return 0
+    
+def parse_int(string_val: str=None):
+    if string_val is None:
+        return 0
+    try:
+        return int(string_val)
+    except ValueError:
+        return 0
+
+def format_date_for_smile_id(date_str: str=None):
+    parsed_date = dateparser.parse(date_str)
+    formatted_date = parsed_date.strftime("%Y-%m-%d") if parsed_date else None
+    return formatted_date

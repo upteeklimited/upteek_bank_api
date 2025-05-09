@@ -126,3 +126,9 @@ def search_users(db: Session, filters: Dict={}):
     if 'status' in filters:
         query = query.filter(User.status == filters['status'])
     return query.filter(User.deleted_at == None).order_by(desc(User.id))
+
+def count_user_by_username_and_user_type(db: Session, username: str = None, user_type: int = 0):
+    return db.query(User).filter(and_(User.username == username, User.user_type == user_type)).count()
+
+def count_user_by_phone_number_and_user_type(db: Session, phone_number: str = None, user_type: int = 0):
+    return db.query(User).filter(and_(User.phone_number == phone_number, User.user_type == user_type)).count()

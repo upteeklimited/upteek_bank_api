@@ -10,15 +10,11 @@ import sys, traceback
 from routers.authentication import auth
 from routers.user import profile
 
-#system routes
-from routers import seed
-
 # Main app section here
-app = FastAPI(title="Upteek Admin")
+app = FastAPI(title="Upteek Bank")
 
 app.include_router(auth.router)
 app.include_router(profile.router)
-app.include_router(seed.router)
 
 #Test routers
 # app.include_router(external.router)
@@ -48,7 +44,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World! Upteek Admin"}
+    return {"message": "Hello World! Upteek Bank"}
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):

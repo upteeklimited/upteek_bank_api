@@ -80,5 +80,5 @@ def get_addresses(db: Session):
 def get_addresses_by_addressable_type(db: Session, addressable_type: str=None):
     return db.query(Address).filter(and_(Address.deleted_at == None, Address.addressable_type == addressable_type)).order_by(desc(Address.id))
 
-def get_addressable(db: Session, addressable_type: str=None, addressable_id: int=0):
-    return db.query(Address).filter(and_(Address.deleted_at == None, Address.addressable_type == addressable_type, Address.addressable_id == addressable_id)).first()
+def get_addressable(db: Session, addressable_type: str=None, addressable_id: int=0, is_primary: int=0):
+    return db.query(Address).filter(and_(Address.deleted_at == None, Address.addressable_type == addressable_type, Address.addressable_id == addressable_id, Address.is_primary == is_primary)).first()

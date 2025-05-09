@@ -66,5 +66,8 @@ def get_single_service_by_id(db: Session, id: int=0):
 def get_single_service_by_code(db: Session, code: str=None):
     return db.query(Service).filter_by(code = code).first()
 
+def check_service_exist(db: Session, code: str=None):
+    return db.query(Service).filter_by(code = code).count()
+
 def get_services(db: Session):
     return db.query(Service).order_by(desc(Service.created_at))

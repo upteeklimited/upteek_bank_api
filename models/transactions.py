@@ -96,6 +96,12 @@ def force_delete_transaction(db: Session, id: int=0, commit: bool=False):
 def get_single_transaction_by_id(db: Session, id: int=0):
     return db.query(Transaction).filter_by(id = id).first()
 
+def get_single_transaction_by_reference(db: Session, reference: str=None):
+    return db.query(Transaction).filter_by(reference = reference).first()
+
+def get_single_transaction_by_external_reference(db: Session, external_reference: str=None):
+    return db.query(Transaction).filter_by(external_reference = external_reference).first()
+
 def get_transactions(db: Session, filters: Dict={}):
     query = db.query(Transaction)
     if 'country_id' in filters:

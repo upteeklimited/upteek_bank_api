@@ -16,6 +16,7 @@ class Setting(Base):
     user_id = Column(BigInteger, default=0)
     email_notification = Column(SmallInteger, default=0)
     sms_notification = Column(SmallInteger, default=0)
+    dashboard_state = Column(Text, nullable=True)
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
