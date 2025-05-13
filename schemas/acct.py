@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, Field
 from datetime import datetime
 from schemas.user import UserModel, MerchantModel
@@ -179,6 +179,7 @@ class VirtualAccountModel(BaseModel):
     bank_name: Optional[str] = None
     is_primary: Optional[int] = 0
     status: Optional[int] = 0
+    created_at: Optional[datetime] = None
 
     class Config:
         orm_mode = True
@@ -188,3 +189,39 @@ class AccountModel(BaseModel):
     account_type_id: Optional[int] = 0
     user_id: Optional[int] = 0
     merchant_id: Optional[int] = 0
+    account_name: Optional[str] = None
+    account_number: Optional[str] = None
+    nuban: Optional[str] = None
+    provider: Optional[str] = None
+    available_balance: Optional[float] = 0
+    ledger_balance: Optional[float] = 0
+    sms_notification: Optional[int] = 0
+    email_notification: Optional[int] = 0
+    is_primary: Optional[int] = 0
+    manager_id: Optional[int] = 0
+    last_active_at: Optional[datetime] = None
+    status: Optional[int] = 0
+    created_at: Optional[datetime] = None
+    account_type: Optional[AccountTypeModel] = None
+    user: Optional[UserModel] = None
+    merchant: Optional[MerchantModel] = None
+    virtual_accounts: Optional[List[MerchantModel]] = None
+
+    class Config:
+        orm_mode = True
+
+class AccountResponseModel(BaseModel):
+    status: bool
+    message: str
+    data: Optional[AccountModel] = None
+
+    class Config:
+        orm_mode = True
+
+class VirtualAccountResponseModel(BaseModel):
+    status: bool
+    message: str
+    data: Optional[VirtualAccountModel] = None
+
+    class Config:
+        orm_mode = True

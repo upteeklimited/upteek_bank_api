@@ -14,6 +14,7 @@ from routers.misc import merch
 from routers.accounting import gl_type
 from routers.accounting import gl
 from routers.accounting import product
+from routers.accounting import cust_acct
 from routers.transaction import type
 
 # Main app section here
@@ -26,6 +27,7 @@ app.include_router(merch.router)
 app.include_router(gl_type.router)
 app.include_router(gl.router)
 app.include_router(product.router)
+app.include_router(cust_acct.router)
 app.include_router(type.router)
 
 #Test routers

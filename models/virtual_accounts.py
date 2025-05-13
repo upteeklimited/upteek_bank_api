@@ -26,7 +26,7 @@ class VirtualAccount(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-    account = relationship('Account')
+    account = relationship('Account', back_populates='virtual_accounts', foreign_keys=[account_id])
     financial_institution = relationship('FinancialInstitution')
 
 def create_virtual_account(db: Session, user_id: int = 0, account_id: int = 0, financial_institution_id: int = 0, account_name: str = None, account_number: str = None, bank_name: str = None, status: int = 0, is_primary: int = 0, is_generated: int = 0, commit: bool=False):
@@ -85,4 +85,8 @@ def get_virtual_accounts(db: Session, filters: Dict={}):
         query = query.filter(VirtualAccount.account_name.like("%" + filters['account_name'] + "%"))
     if 'account_number' in filters:
         query = query.filter(VirtualAccount.account_number.like("%" + filters['account_number'] + "%"))
+    if 'is_primary' in filters:
+        query = query.filter_by(is_primary = filters['is_primary'])
+    if 'is_generated' in filters:
+        query = query.filter_by(is_generated = filters['is_generated'])
     return query.order_by(desc(VirtualAccount.created_at))
