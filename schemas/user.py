@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
+from schemas.misc import CountryModel
 
 class UserModel(BaseModel):
     id: int
@@ -9,6 +10,7 @@ class UserModel(BaseModel):
     email: Optional[str] = None
     user_type: Optional[int] = 0
     role: Optional[int] = 0
+    is_new_user: Optional[bool] = None
     
     class Config:
         orm_mode = True
@@ -72,44 +74,32 @@ class MerchantModel(BaseModel):
     class Config:
         orm_mode = True
 
-class AuthAccountModel(BaseModel):
-    id: int
-    user_id: int
-    account_type_id: Optional[int] = 0
-    account_name: Optional[str] = None
-    account_number: Optional[str] = None
-    nuban: Optional[str] = None
-    provider: Optional[str] = None
-    available_balance: Optional[float] = 0.0
-    ledger_balance: Optional[float] = 0.0
-    sms_notification: Optional[int] = 0
-    email_notification: Optional[int] = 0
-    is_primary: Optional[int] = 0
-    
-    class Config:
-        orm_mode = True
-
-class AddressModel(BaseModel):
+class UserMainModel(BaseModel):
     id: int
     country_id: Optional[int] = 0
-    state_id: Optional[int] = 0
-    city_id: Optional[int] = 0
-    lga_id: Optional[int] = 0
-    addressable_type: Optional[str] = None
-    addressable_id: Optional[int] = 0
-    house_number: Optional[str] = None
-    street: Optional[str] = None
-    nearest_bus_stop: Optional[str] = None
-    latitude: Optional[str] = None
-    longitude: Optional[str] = None
-    is_primary: Optional[int] = 0
+    merchant_id: Optional[int] = 0
+    username: Optional[str] = None
+    phone_number: Optional[str] = None
+    email: Optional[str] = None
+    user_type: Optional[int] = 0
+    role: Optional[int] = 0
+    status: Optional[int] = 0
+    created_at: Optional[str] = None
+    country: Optional[CountryModel] = None
+    profile: Optional[ProfileModel] = None
+    merchant: Optional[MerchantModel] = None
     
     class Config:
         orm_mode = True
 
 class AuthResponseModel(BaseModel):
+    id: int
     access_token: Optional[str] = None
-    user: Optional[UserModel] = None
+    username: Optional[str] = None
+    phone_number: Optional[str] = None
+    email: Optional[str] = None
+    user_type: Optional[int] = 0
+    role: Optional[int] = 0
     profile: Optional[ProfileModel] = None
     setting: Optional[SettingModel] = None
     
@@ -125,7 +115,12 @@ class MainAuthResponseModel(BaseModel):
         orm_mode = True
 
 class UserDetailsResponseModel(BaseModel):
-    user: Optional[UserModel] = None
+    id: int
+    username: Optional[str] = None
+    phone_number: Optional[str] = None
+    email: Optional[str] = None
+    user_type: Optional[int] = 0
+    role: Optional[int] = 0
     profile: Optional[ProfileModel] = None
     setting: Optional[SettingModel] = None
     
@@ -137,5 +132,45 @@ class UserResponseModel(BaseModel):
     message: str
     data: Optional[UserDetailsResponseModel] = None
     
+    class Config:
+        orm_mode = True
+
+class UserMainResponseModel(BaseModel):
+    status: bool
+    message: str
+    data: Optional[UserMainModel] = None
+    
+    class Config:
+        orm_mode = True
+
+class CreateUserModel(BaseModel):
+    country_id: int
+    username: str
+    phone_number: str
+    email: str
+    password: str
+    user_type: int = 0
+    role: int = 0
+    first_name: Optional[str] = None
+    other_name: Optional[str] = None
+    last_name: Optional[str] = None
+    
+    class Config:
+        orm_mode = True
+
+class UpdateUserModel(BaseModel):
+    status: Optional[int] = 0
+    role: Optional[int] = 0
+    first_name: Optional[str] = None
+    other_name: Optional[str] = None
+    last_name: Optional[str] = None
+    bio: Optional[str] = None
+    
+    class Config:
+        orm_mode = True
+
+class UpdateUserPasswordModel(BaseModel):
+    password: str
+
     class Config:
         orm_mode = True

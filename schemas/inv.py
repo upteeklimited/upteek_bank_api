@@ -22,7 +22,6 @@ class UpdateCategoryRequest(BaseModel):
 
 class CategoryModel(BaseModel):
     id: int
-    merchant_id: Optional[int] = 0
     category_id: Optional[int] = 0
     name: str
     description: Optional[str] = None

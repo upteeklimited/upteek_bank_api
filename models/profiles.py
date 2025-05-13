@@ -13,7 +13,7 @@ class Profile(Base):
     __tablename__ = "profiles"
      
     id = Column(BigInteger, primary_key=True, index=True)
-    user_id = Column(BigInteger, default=0)
+    user_id = Column(Integer, ForeignKey('users.id'))
     compliance_provider_id = Column(BigInteger, default=0)
     compliance_external_reference = Column(String, nullable=True)
     first_name = Column(String, nullable=True)
@@ -57,6 +57,8 @@ class Profile(Base):
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
+
+    user = relationship('User', back_populates='profile')
 
 
 def create_profile(db: Session, user_id: int = 0, compliance_provider_id: int = 0, compliance_external_reference: str = None, first_name: str = None, other_name: str = None, last_name: str = None, mothers_maiden_name: str = None, date_of_birth: str = None, gender: str = None, bio: str = None, marital_status: str = None, avatar: str = None, id_document_file: str = None, id_document_file_back: str = None, id_document_type: str = None, id_document_value: str = None, selfie: str = None, bvn: str = None, bvn_status: int = 0, bvn_meta_data: str = None, nin: str = None, nin_status: int = 0, nin_meta_data: str = None, kyc_level: int = 0, compliance_request_data: str = None, compliance_response_data: str = None, compliance_status: int = 0, level_one_approved_by: int = 0, level_one_rejected_by: int = 0, level_one_approved_at: str = None, level_one_rejected_at: str = None, level_two_approved_by: int = 0, level_two_rejected_by: int = 0, level_two_approved_at: str = None, level_two_rejected_at: str = None, level_three_approved_by: int = 0, level_three_rejected_by: int = 0, level_three_approved_at: str = None, level_three_rejected_at: str = None, meta_data: str = None, status: int = 0, commit: bool=False):

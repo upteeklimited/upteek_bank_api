@@ -1,6 +1,6 @@
 from typing import Dict
 from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
@@ -13,8 +13,8 @@ class User(Base):
     __tablename__ = "users"
      
     id = Column(BigInteger, primary_key=True, index=True)
-    country_id = Column(BigInteger, default=0)
-    merchant_id = Column(BigInteger, default=0)
+    country_id = Column(BigInteger, ForeignKey('countries.id'))
+    merchant_id = Column(BigInteger, ForeignKey('merchants.id'))
     username = Column(String, nullable=True)
     email = Column(String, nullable=True)
     phone_number = Column(String, nullable=True)
@@ -28,6 +28,10 @@ class User(Base):
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
+
+    country = relationship("Country")
+    merchant = relationship("Merchant")
+    profile = relationship('Profile', back_populates='user', uselist=False)
 
 
 def create_user(db: Session, country_id: int = 0, merchant_id: int = 0, username: str = None, email: str = None, phone_number: str = None, password: str = None, device_token: str = None, external_provider: str = None, external_reference: str = None, user_type: int = 0, role: int = 0, status: int = 0, commit: bool=False):
@@ -72,6 +76,9 @@ def force_delete_user(db: Session, id: int=0, commit: bool=False):
 def get_single_user_by_id(db: Session, id: int=0):
     return db.query(User).filter_by(id = id).first()
 
+def get_main_single_user_by_id(db: Session, id: int=0):
+    return db.query(User).options(joinedload(User.merchant), joinedload(User.country), joinedload(User.profile)).filter_by(id = id).first()
+
 def get_single_user_by_email(db: Session, email: str = None):
     return db.query(User).filter_by(email = email).first()
 
@@ -94,7 +101,7 @@ def get_single_user_by_any_main_details(db: Session, email: str = None, phone_nu
     return db.query(User).filter(or_(User.email == email, User.phone_number == phone_number, User.username == username)).first()
 
 def get_users(db: Session):
-    return db.query(User).filter(User.deleted_at == None).order_by(desc(User.id))
+    return db.query(User).options(joinedload(User.merchant), joinedload(User.country), joinedload(User.profile)).filter(User.deleted_at == None).order_by(desc(User.id))
 
 def get_users_by_country_id(db: Session, country_id: int = 0):
     return db.query(User).filter_by(country_id = country_id).filter(User.deleted_at == None).order_by(desc(User.id))
@@ -112,7 +119,7 @@ def get_users_by_user_type_and_role(db: Session, user_type: int = 0, role: int =
     return db.query(User).filter_by(user_type = user_type, role = role).filter(User.deleted_at == None).order_by(desc(User.id))
 
 def search_users(db: Session, filters: Dict={}):
-    query = db.query(User)
+    query = db.query(User).options(joinedload(User.merchant), joinedload(User.country), joinedload(User.profile))
     if 'username' in filters:
         query = query.filter(User.username.like("%"+filters['username']+"%"))
     if 'email' in filters:

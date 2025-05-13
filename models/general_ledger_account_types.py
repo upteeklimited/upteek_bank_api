@@ -81,8 +81,10 @@ def get_general_ledger_account_types(db: Session, filters: Dict={}):
         query = query.filter_by(country_id = filters['country_id'])
     if 'currency_id' in filters:
         query = query.filter_by(currency_id = filters['currency_id'])
+    if 'name' in filters:
+        query = query.filter(GeneralLedgerAccountType.name.like('%' + filters['name'] + '%'))
     if 'account_code' in filters:
-        query = query.filter_by(account_code = filters['account_code'])
+        query = query.filter(GeneralLedgerAccountType.account_code.like('%' + filters['account_code'] + '%'))
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(GeneralLedgerAccountType.created_at))

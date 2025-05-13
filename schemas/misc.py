@@ -108,6 +108,21 @@ class LGAResponseModel(BaseModel):
     class Config:
         orm_mode = True
 
+class CreateMerchantIndustryModel(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+class UpdateMerchantIndustryModel(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
 class MerchantIndustryModel(BaseModel):
     id: int
     name: Optional[str] = None
@@ -122,6 +137,22 @@ class MerchantIndustryResponseModel(BaseModel):
     status: bool
     message: str
     data: Optional[MerchantIndustryModel] = None
+
+    class Config:
+        orm_mode = True
+
+class CreateMerchantCategoryModel(BaseModel):
+    industry_id: Optional[int] = 0
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+class UpdateMerchantCategoryModel(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[int] = None
 
     class Config:
         orm_mode = True

@@ -1,6 +1,6 @@
 from typing import Dict
 from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
@@ -13,9 +13,9 @@ class Account(Base):
     __tablename__ = "accounts"
      
     id = Column(BigInteger, primary_key=True, index=True)
-    account_type_id = Column(BigInteger, default=0)
-    user_id = Column(BigInteger, default=0)
-    merchant_id = Column(BigInteger, default=0)
+    account_type_id = Column(BigInteger, ForeignKey('account_types.id'))
+    user_id = Column(BigInteger, ForeignKey('users.id'))
+    merchant_id = Column(BigInteger, ForeignKey('merchants.id'))
     account_name = Column(String, nullable=True)
     account_number = Column(String, nullable=True)
     nuban = Column(String, nullable=True)
@@ -32,6 +32,11 @@ class Account(Base):
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
+
+    account_type = relationship('AccountType', back_populates='accounts')
+    user = relationship('User')
+    merchant = relationship('Merchant')
+    virtual_accounts = relationship('VirtualAccount')
 
 def create_account(db: Session, account_type_id: int = 0, user_id: int = 0, merchant_id: int = 0, account_name: str = None, account_number: str = None, nuban: str = None, provider: str = None, available_balance: float = 0, ledger_balance: float = 0, sms_notification: int = 0, email_notification: int = 0, is_primary: int = 0, manager_id: int = 0, last_active_at: str = None, status: int = 0, meta_data: str = None, deleted_at: str = None, commit: bool=False):
     account = Account(account_type_id=account_type_id, user_id=user_id, merchant_id=merchant_id, account_name=account_name, account_number=account_number, nuban=nuban, provider=provider, available_balance=available_balance, ledger_balance=ledger_balance, sms_notification=sms_notification, email_notification=email_notification, is_primary=is_primary, manager_id=manager_id, last_active_at=last_active_at, status=status, meta_data=meta_data, deleted_at=deleted_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
@@ -73,7 +78,10 @@ def force_delete_account(db: Session, id: int=0, commit: bool=False):
     return True
 
 def get_single_account_by_id(db: Session, id: int=0):
-    return db.query(Account).filter_by(id = id).first()
+    return db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user), joinedload(Account.merchant)).filter_by(id = id).first()
+
+def get_single_account_by_account_number(db: Session, account_number: str = None):
+    return db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user), joinedload(Account.merchant)).filter(or_(Account.account_number == account_number, Account.nuban == account_number)).first()
 
 def get_last_account(db: Session):
     return db.query(Account).order_by(desc(Account.id)).first()
@@ -82,7 +90,7 @@ def get_single_user_primary_account(db: Session, user_id: int=0):
     return db.query(Account).filter_by(user_id = user_id, is_primary = 1).first()
 
 def get_accounts(db: Session, filters: Dict={}):
-    query = db.query(Account)
+    query = db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user), joinedload(Account.merchant))
     if 'account_type_id' in filters:
         query = query.filter_by(account_type_id = filters['account_type_id'])
     if 'user_id' in filters:

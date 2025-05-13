@@ -9,12 +9,24 @@ import sys, traceback
 
 from routers.authentication import auth
 from routers.user import profile
+from routers.misc import geo
+from routers.misc import merch
+from routers.accounting import gl_type
+from routers.accounting import gl
+from routers.accounting import product
+from routers.transaction import type
 
 # Main app section here
 app = FastAPI(title="Upteek Bank")
 
 app.include_router(auth.router)
 app.include_router(profile.router)
+app.include_router(geo.router)
+app.include_router(merch.router)
+app.include_router(gl_type.router)
+app.include_router(gl.router)
+app.include_router(product.router)
+app.include_router(type.router)
 
 #Test routers
 # app.include_router(external.router)

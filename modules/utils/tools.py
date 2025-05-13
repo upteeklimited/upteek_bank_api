@@ -6,6 +6,7 @@ import random
 from datetime import datetime
 from typing import List, Dict
 from settings.config import load_env_config
+from database.model import get_last_transaction_type
 import dateparser
 import time
 import re
@@ -54,6 +55,13 @@ def generate_order_reference():
     ts = datetime.timestamp(dt)
     ts = int(ts)
     return "#UPORD_" + str(ts)
+
+def generate_transaction_type_code(db: Session):
+    last_trans_type = get_last_transaction_type(db=db)
+    if last_trans_type is None:
+        return "001"
+    else:
+        return str(last_trans_type.id).zfill(3)
 
 def process_schema_dictionary(info: Dict={}):
     if bool(info) == False:

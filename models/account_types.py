@@ -13,7 +13,7 @@ class AccountType(Base):
     __tablename__ = "account_types"
      
     id = Column(BigInteger, primary_key=True, index=True)
-    product_id = Column(BigInteger, default=0)
+    product_id = Column(BigInteger, ForeignKey('financial_products.id'))
     name = Column(String, nullable=True)
     description = Column(Text, nullable=True)
     account_code = Column(String, nullable=True)
@@ -24,6 +24,9 @@ class AccountType(Base):
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
+
+    financial_product = relationship('FinancialProduct', back_populates='account_type')
+    accounts = relationship('Account', back_populates='account_type')
 
 def create_account_type(db: Session, product_id: int = 0, name: str = None, description: str = None, account_code: str = None, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
     account_type = AccountType(product_id=product_id, name=name, description=description, account_code=account_code, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())

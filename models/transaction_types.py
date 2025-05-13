@@ -80,6 +80,9 @@ def get_single_transaction_type_by_id(db: Session, id: int=0):
 def get_single_transaction_type_by_code(db: Session, code: str=None):
     return db.query(TransactionType).filter_by(code = code).first()
 
+def get_last_transaction_type(db: Session):
+    return db.query(TransactionType).order_by(desc(TransactionType.id)).first()
+
 def get_transaction_types(db: Session, filters: Dict={}):
     query = db.query(TransactionType)
     if 'corresponding_gl_id' in filters:
