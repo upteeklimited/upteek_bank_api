@@ -1,6 +1,6 @@
 from typing import Dict
 from sqlalchemy.orm import Session
-from database.model import get_accounts, get_single_account_by_id, get_single_account_by_account_number
+from database.model import get_accounts, get_single_account_by_id, get_single_account_by_account_number, get_virtual_accounts, get_single_virtual_account_by_id
 from fastapi_pagination.ext.sqlalchemy import paginate
 
 def retrieve_accounts(db: Session, filters: Dict={}):
@@ -35,4 +35,23 @@ def retrieve_single_account_by_number(db: Session, account_number: str=None):
             'status': True,
             'message': 'Success',
             'data': account,
+        }
+    
+def retrieve_virtual_accounts(db: Session, filters: Dict={}):
+    data = get_virtual_accounts(db=db, filters=filters)
+    return paginate(data)
+
+def retrive_single_virtual_account(db: Session, virtual_account_id: int=0):
+    va = get_single_account_by_id(db=db, id=virtual_account_id)
+    if va is None:
+        return {
+            'status': False,
+            'message': 'Virtual Account not found',
+            'data': None,
+        }
+    else:
+        return {
+            'status': True,
+            'message': 'Success',
+            'data': va,
         }

@@ -93,13 +93,8 @@ class UserMainModel(BaseModel):
         orm_mode = True
 
 class AuthResponseModel(BaseModel):
-    id: int
     access_token: Optional[str] = None
-    username: Optional[str] = None
-    phone_number: Optional[str] = None
-    email: Optional[str] = None
-    user_type: Optional[int] = 0
-    role: Optional[int] = 0
+    user: Optional[UserModel] = None
     profile: Optional[ProfileModel] = None
     setting: Optional[SettingModel] = None
     

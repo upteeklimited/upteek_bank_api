@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
-
+from schemas.user import UserModel, MerchantModel
 
 class GLTypeModel(BaseModel):
     id: int
@@ -168,3 +168,23 @@ class FinancialProductResponseModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+class VirtualAccountModel(BaseModel):
+    id: int
+    user_id: Optional[int] = 0
+    account_id: Optional[int] = 0
+    financial_institution_id: Optional[int] = 0
+    account_name: Optional[str] = None
+    account_number: Optional[str] = None
+    bank_name: Optional[str] = None
+    is_primary: Optional[int] = 0
+    status: Optional[int] = 0
+
+    class Config:
+        orm_mode = True
+
+class AccountModel(BaseModel):
+    id: int
+    account_type_id: Optional[int] = 0
+    user_id: Optional[int] = 0
+    merchant_id: Optional[int] = 0
