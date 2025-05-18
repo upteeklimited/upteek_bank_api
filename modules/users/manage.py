@@ -1,6 +1,6 @@
 from typing import Dict
 from sqlalchemy.orm import Session
-from database.model import registration_unique_field_check, create_user_with_relevant_rows, update_user, delete_user, get_main_single_user_by_id, get_users, search_users, get_single_country_by_code, get_single_profile_by_user_id, get_single_setting_by_user_id, update_profile_by_user_id
+from database.model import registration_unique_field_check, create_user_with_relevant_rows, update_user, delete_user, get_main_single_user_by_id, get_users, search_users, get_single_country_by_code, get_single_profile_by_user_id, get_single_setting_by_user_id, update_profile_by_user_id, search_customers, get_customers
 from modules.utils.net import process_phone_number
 from modules.utils.tools import process_schema_dictionary
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -86,8 +86,16 @@ def retrieve_users(db: Session):
     users = get_users(db=db)
     return paginate(users)
 
+def retrieve_customers(db: Session):
+    users = get_customers(db=db)
+    return paginate(users)
+
 def retrieve_users_by_search(db: Session, filters: Dict={}):
     users = search_users(db=db, filters=filters)
+    return paginate(users)
+
+def retrieve_customers_by_search(db: Session, filters: Dict={}):
+    users = search_customers(db=db, filters=filters)
     return paginate(users)
 
 def retrieve_single_user(db: Session, user_id: int = 0):

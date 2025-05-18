@@ -6,6 +6,7 @@ from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
 from sqlalchemy.orm import relationship
+from settings.constants import USER_TYPES
 
 
 class User(Base):
@@ -118,6 +119,9 @@ def get_users_by_role(db: Session, role: int = 0):
 def get_users_by_user_type_and_role(db: Session, user_type: int = 0, role: int = 0):
     return db.query(User).filter_by(user_type = user_type, role = role).filter(User.deleted_at == None).order_by(desc(User.id))
 
+def get_customers(db: Session):
+    return db.query(User).options(joinedload(User.merchant), joinedload(User.country), joinedload(User.profile)).filter(or_(User.user_type == USER_TYPES['merchant']['num'], USER_TYPES['customer']['num'])).filter(User.deleted_at == None).order_by(desc(User.id))
+
 def search_users(db: Session, filters: Dict={}):
     query = db.query(User).options(joinedload(User.merchant), joinedload(User.country), joinedload(User.profile))
     if 'username' in filters:
@@ -130,6 +134,18 @@ def search_users(db: Session, filters: Dict={}):
         query = query.filter(User.user_type == filters['user_type'])
     if 'role' in filters:
         query = query.filter(User.role == filters['role'])
+    if 'status' in filters:
+        query = query.filter(User.status == filters['status'])
+    return query.filter(User.deleted_at == None).order_by(desc(User.id))
+
+def search_customers(db: Session, filters: Dict={}):
+    query = db.query(User).options(joinedload(User.merchant), joinedload(User.country), joinedload(User.profile)).filter(or_(User.user_type == USER_TYPES['merchant']['num'], USER_TYPES['customer']['num']))
+    if 'username' in filters:
+        query = query.filter(User.username.like("%"+filters['username']+"%"))
+    if 'email' in filters:
+        query = query.filter(User.email.like("%"+filters['email']+"%"))
+    if 'phone_number' in filters:
+        query = query.filter(User.phone_number.like("%"+filters['phone_number']+"%"))
     if 'status' in filters:
         query = query.filter(User.status == filters['status'])
     return query.filter(User.deleted_at == None).order_by(desc(User.id))
