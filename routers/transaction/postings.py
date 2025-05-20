@@ -15,8 +15,9 @@ router = APIRouter(
 async def general_posting(request: Request, fields: CreatePostingModel, db: Session = Depends(get_db), user=Depends(auth.auth_wrapper)):
     req = create_general_posting(db=db, transaction_type_id=fields.transaction_type_id, from_account_number=fields.from_account_number, to_account_number=fields.to_account_number, amount=fields.amount, narration=fields.narration)
     return req
+
 @router.get("/", response_model=Page[TransactionModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def get_all(request: Request, db: Session = Depends(get_db), status: int = 0):
+async def get_all(request: Request, db: Session = Depends(get_db), user=Depends(auth.auth_wrapper), status: int = 0):
     filters = {}
     if status is not None:
         if  status > 0:
