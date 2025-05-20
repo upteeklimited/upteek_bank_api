@@ -58,3 +58,9 @@ USER_TYPES={
         'name': 'Customer',
     },
 }
+
+TRANSACTION_ACTIONS = {
+    'no_action': 0,
+    'debit': 1,
+    'credit': 2,
+}

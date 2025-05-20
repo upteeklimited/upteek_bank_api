@@ -16,6 +16,7 @@ from routers.accounting import gl
 from routers.accounting import product
 from routers.accounting import cust_acct
 from routers.transaction import type
+from routers.transaction import postings
 from routers.user import main as user_main
 
 # Main app section here
@@ -30,6 +31,7 @@ app.include_router(gl.router)
 app.include_router(product.router)
 app.include_router(cust_acct.router)
 app.include_router(type.router)
+app.include_router(postings.router)
 app.include_router(user_main.router)
 
 #Test routers

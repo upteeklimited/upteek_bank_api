@@ -62,3 +62,51 @@ class TransTypeResponseModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+class CreatePostingModel(BaseModel):
+    transaction_type_id: int
+    from_account_number: str
+    to_account_number: str
+    amount: float
+    narration: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+class TransactionModel(BaseModel):
+    id: int
+    country_id: Optional[int] = 0
+    currency_id: Optional[int] = 0
+    user_id: Optional[int] = 0
+    merchant_id: Optional[int] = 0
+    gl_id: Optional[int] = 0
+    account_id: Optional[int] = 0
+    type_id: Optional[int] = 0
+    order_id: Optional[int] = 0
+    loan_id: Optional[int] = 0
+    collection_id: Optional[int] = 0
+    card_id: Optional[int] = 0
+    institution_id: Optional[int] = 0
+    bill_id: Optional[int] = 0
+    beneficiary_id: Optional[int] = 0
+    action: Optional[int] = 0
+    reference: Optional[str] = None
+    external_reference: Optional[str] = None
+    description: Optional[str] = None
+    narration: Optional[str] = None
+    amount: Optional[float] = 0
+    previous_balance: Optional[float] = 0
+    new_balance: Optional[float] = 0
+    status: Optional[int] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True
+
+class TransactionResponseModel(BaseModel):
+    status: bool
+    message: str
+    data: Optional[TransactionModel] = None
+
+    class Config:
+        orm_mode = True

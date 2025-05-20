@@ -106,7 +106,7 @@ def registration_unique_field_check(db: Session, phone_number: str=None, usernam
             'message': 'Validation successful'
         }
 
-def debit_account(db: Session, account_id: int=0, amount: float=0):
+def debit_account(db: Session, account_id: int=0, amount: float=0, override: bool=False):
     account = get_single_account_by_id(db=db, id=account_id)
     if account is None:
         return {
@@ -114,7 +114,7 @@ def debit_account(db: Session, account_id: int=0, amount: float=0):
             'message': 'Account not found',
             'data': None,
         }
-    if account.available_balance < amount:
+    if (account.available_balance < amount) and override == True:
         return {
             'status': False,
             'message': 'Insufficient balance',
