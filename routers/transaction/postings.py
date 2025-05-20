@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from fastapi_pagination import Page
 
 router = APIRouter(
-    prefix="/transaction_types",
-    tags=["transaction_types"]
+    prefix="/transactions",
+    tags=["transactions"]
 )
 
 @router.post("/general_posting", response_model=TransactionResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
