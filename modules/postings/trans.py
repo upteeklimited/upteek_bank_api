@@ -1,4 +1,5 @@
 from typing import Dict
+import dateparser
 from sqlalchemy.orm import Session
 from database.model import debit_account, create_account, debit_general_ledger_account, credit_general_ledger_account, credit_account, create_transaction, get_single_account_by_account_number, get_single_general_ledger_account_by_account_number, get_single_transaction_type_by_id, get_single_currency_by_code, get_single_country_by_code, get_single_transaction_by_id, get_single_transaction_by_reference, get_transactions
 from modules.utils.tools import generate_transaction_reference
@@ -180,6 +181,12 @@ def retrieve_transactions(db: Session, filters: Dict={}):
         account = get_single_account_by_account_number(db=db, account_number=filters['account_number'])
         if account is not None:
             filters['account_id'] = account.id
+    if 'from_date' in filters:
+        if filters['from_date'] is not None:
+            filters['from_date'] = dateparser.parse(filters['from_date'])
+    if 'to_date' in filters:
+        if filters['to_date'] is not None:
+            filters['to_date'] = dateparser.parse(filters['to_date'])
     data = get_transactions(db=db, filters=filters)
     return paginate(data)
 

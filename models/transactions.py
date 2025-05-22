@@ -1,11 +1,13 @@
 from typing import Dict
 from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
 from sqlalchemy.orm import relationship
+from models.users import User
+from models.general_ledger_accounts import GeneralLedgerAccount
 
 
 class Transaction(Base):
@@ -13,13 +15,13 @@ class Transaction(Base):
     __tablename__ = "transactions"
      
     id = Column(BigInteger, primary_key=True, index=True)
-    country_id = Column(BigInteger, default=0)
-    currency_id = Column(BigInteger, default=0)
-    user_id = Column(BigInteger, default=0)
-    merchant_id = Column(BigInteger, default=0)
-    gl_id = Column(BigInteger, default=0)
-    account_id = Column(BigInteger, default=0)
-    type_id = Column(BigInteger, default=0)
+    country_id = Column(BigInteger, ForeignKey('countries.id'))
+    currency_id = Column(BigInteger, ForeignKey('currencies.id'))
+    user_id = Column(BigInteger, ForeignKey('users.id'))
+    merchant_id = Column(BigInteger, ForeignKey('merchants.id'))
+    gl_id = Column(BigInteger, ForeignKey('general_ledger_accounts.id'))
+    account_id = Column(BigInteger, ForeignKey('accounts.id'))
+    type_id = Column(BigInteger, ForeignKey('transaction_types.id'))
     order_id = Column(BigInteger, default=0)
     loan_id = Column(BigInteger, default=0)
     collection_id = Column(BigInteger, default=0)
@@ -54,6 +56,14 @@ class Transaction(Base):
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
+
+    country = relationship("Country")
+    currency = relationship("Currency")
+    user = relationship('User')
+    merchant = relationship('Merchant')
+    transaction_type = relationship('TransactionType', back_populates='transactions', foreign_keys=[type_id])
+    general_ledger = relationship('GeneralLedgerAccount', back_populates='transactions', foreign_keys=[gl_id])
+    account = relationship('Account', back_populates='transactions', foreign_keys=[account_id])
 
 def create_transaction(db: Session, country_id: int = 0, currency_id: int = 0, user_id: int = 0, merchant_id: int = 0, gl_id: int = 0, account_id: int = 0, type_id: int = 0, order_id: int = 0, loan_id: int = 0, collection_id: int = 0, card_id: int = 0, institution_id: int = 0, bill_id: int = 0, beneficiary_id: int = 0, action: int = 0, reference: str = None, external_reference: str = None, description: str = None, narration: str = None, amount: float = 0, previous_balance: float = 0, new_balance: float = 0, external_session_id: str = None, external_account_name: str = None, external_account_number: str = None, external_bvn: str = None, external_account_type: str = None, external_bank_code: str = None, external_location: str = None, biller_name: str = None, biller_customer_id: str = None, value_date: str = None, meta_data: str = None, extra_meta_data: str = None, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
     trans = Transaction(country_id=country_id, currency_id=currency_id, user_id=user_id, merchant_id=merchant_id, gl_id=gl_id, account_id=account_id, type_id=type_id, order_id=order_id, loan_id=loan_id, collection_id=collection_id, card_id=card_id, institution_id=institution_id, bill_id=bill_id, beneficiary_id=beneficiary_id, action=action, reference=reference, external_reference=external_reference, description=description, narration=narration, amount=amount, previous_balance=previous_balance, new_balance=new_balance, external_session_id=external_session_id, external_account_name=external_account_name, external_account_number=external_account_number, external_bvn=external_bvn, external_account_type=external_account_type, external_bank_code=external_bank_code, external_location=external_location, biller_name=biller_name, biller_customer_id=biller_customer_id, value_date=value_date, meta_data=meta_data, extra_meta_data=extra_meta_data, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
@@ -95,7 +105,7 @@ def force_delete_transaction(db: Session, id: int=0, commit: bool=False):
     return True
 
 def get_single_transaction_by_id(db: Session, id: int=0):
-    return db.query(Transaction).filter_by(id = id).first()
+    return db.query(Transaction).options(joinedload(Transaction.country), joinedload(Transaction.currency), joinedload(Transaction.user).joinedload(User.profile), joinedload(Transaction.merchant), joinedload(Transaction.transaction_type), joinedload(Transaction.general_ledger).joinedload(GeneralLedgerAccount.gl_type)).filter_by(id = id).first()
 
 def get_single_transaction_by_reference(db: Session, reference: str=None):
     return db.query(Transaction).filter_by(reference = reference).first()
@@ -104,7 +114,7 @@ def get_single_transaction_by_external_reference(db: Session, external_reference
     return db.query(Transaction).filter_by(external_reference = external_reference).first()
 
 def get_transactions(db: Session, filters: Dict={}):
-    query = db.query(Transaction)
+    query = db.query(Transaction).options(joinedload(Transaction.country), joinedload(Transaction.currency), joinedload(Transaction.user).joinedload(User.profile), joinedload(Transaction.merchant), joinedload(Transaction.transaction_type), joinedload(Transaction.general_ledger).joinedload(GeneralLedgerAccount.gl_type))
     if 'country_id' in filters:
         query = query.filter_by(country_id = filters['country_id'])
     if 'currency_id' in filters:
@@ -137,6 +147,9 @@ def get_transactions(db: Session, filters: Dict={}):
         query = query.filter(Transaction.reference.like('%' + filters['reference'] + '%'))
     if 'external_reference' in filters:
         query = query.filter(Transaction.external_reference.like('%' + filters['external_reference'] + '%'))
+    if 'from_date' in filters and 'to_date' in filters:
+        if filters['from_date'] != None and filters['to_date'] != None:
+            query = query.filter(and_(Transaction.created_at >= filters['from_date'], Transaction.created_at <= filters['to_date']))
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(Transaction.created_at))

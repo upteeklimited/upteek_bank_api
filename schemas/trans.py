@@ -1,6 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
+from schemas.user import UserInfoModel, MerchantModel
+from schemas.misc import CountryModel, CurrencyModel
+from schemas.acct import GLModel, AccountModel
 
 class TransactionTypeModel(BaseModel):
     id: int
@@ -99,6 +102,13 @@ class TransactionModel(BaseModel):
     new_balance: Optional[float] = 0
     status: Optional[int] = None
     created_at: Optional[datetime] = None
+    country: Optional[CountryModel] = None
+    currency: Optional[CurrencyModel] = None
+    user: Optional[UserInfoModel] = None
+    merchant: Optional[MerchantModel] = None
+    transaction_type: Optional[TransactionTypeModel] = None
+    general_ledger: Optional[GLModel] = None
+    account: Optional[AccountModel] = None
 
     class Config:
         orm_mode = True

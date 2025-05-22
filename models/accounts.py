@@ -38,6 +38,7 @@ class Account(Base):
     user = relationship('User')
     merchant = relationship('Merchant')
     virtual_accounts = relationship('VirtualAccount', back_populates='account', foreign_keys='VirtualAccount.account_id')
+    transactions = relationship('Transaction', back_populates='account', foreign_keys='Transaction.account_id')
 
 def create_account(db: Session, account_type_id: int = 0, user_id: int = 0, merchant_id: int = 0, account_name: str = None, account_number: str = None, nuban: str = None, provider: str = None, available_balance: float = 0, ledger_balance: float = 0, sms_notification: int = 0, email_notification: int = 0, is_primary: int = 0, manager_id: int = 0, last_active_at: str = None, status: int = 0, meta_data: str = None, deleted_at: str = None, commit: bool=False):
     account = Account(account_type_id=account_type_id, user_id=user_id, merchant_id=merchant_id, account_name=account_name, account_number=account_number, nuban=nuban, provider=provider, available_balance=available_balance, ledger_balance=ledger_balance, sms_notification=sms_notification, email_notification=email_notification, is_primary=is_primary, manager_id=manager_id, last_active_at=last_active_at, status=status, meta_data=meta_data, deleted_at=deleted_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
