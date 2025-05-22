@@ -102,7 +102,7 @@ def get_single_user_by_any_main_details(db: Session, email: str = None, phone_nu
     return db.query(User).filter(or_(User.email == email, User.phone_number == phone_number, User.username == username)).first()
 
 def get_users(db: Session):
-    return db.query(User).options(joinedload(User.merchant), joinedload(User.country), joinedload(User.profile)).filter(User.deleted_at == None).order_by(desc(User.id))
+    return db.query(User).options(joinedload(User.merchant), joinedload(User.country), joinedload(User.profile)).filter(and_(User.user_type == USER_TYPES['bank']['num'], User.deleted_at == None)).order_by(desc(User.id))
 
 def get_users_by_country_id(db: Session, country_id: int = 0):
     return db.query(User).filter_by(country_id = country_id).filter(User.deleted_at == None).order_by(desc(User.id))
