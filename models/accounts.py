@@ -6,6 +6,7 @@ from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
 from sqlalchemy.orm import relationship
+from models.users import User
 
 
 class Account(Base):
@@ -78,10 +79,10 @@ def force_delete_account(db: Session, id: int=0, commit: bool=False):
     return True
 
 def get_single_account_by_id(db: Session, id: int=0):
-    return db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user), joinedload(Account.merchant)).filter_by(id = id).first()
+    return db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user).joinedload(User.profile), joinedload(Account.merchant)).filter_by(id = id).first()
 
 def get_single_account_by_account_number(db: Session, account_number: str = None):
-    return db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user), joinedload(Account.merchant)).filter(or_(Account.account_number == account_number, Account.nuban == account_number)).first()
+    return db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user).joinedload(User.profile), joinedload(Account.merchant)).filter(or_(Account.account_number == account_number, Account.nuban == account_number)).first()
 
 def get_last_account(db: Session):
     return db.query(Account).order_by(desc(Account.id)).first()
@@ -90,7 +91,7 @@ def get_single_user_primary_account(db: Session, user_id: int=0):
     return db.query(Account).filter_by(user_id = user_id, is_primary = 1).first()
 
 def get_accounts(db: Session, filters: Dict={}):
-    query = db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user), joinedload(Account.merchant))
+    query = db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user).joinedload(User.profile), joinedload(Account.merchant))
     if 'account_type_id' in filters:
         query = query.filter_by(account_type_id = filters['account_type_id'])
     if 'user_id' in filters:

@@ -1,7 +1,7 @@
 from typing import Optional, List
 from pydantic import BaseModel, Field
 from datetime import datetime
-from schemas.user import UserModel, MerchantModel
+from schemas.user import UserInfoModel, MerchantModel
 
 class GLTypeModel(BaseModel):
     id: int
@@ -203,9 +203,9 @@ class AccountModel(BaseModel):
     status: Optional[int] = 0
     created_at: Optional[datetime] = None
     account_type: Optional[AccountTypeModel] = None
-    user: Optional[UserModel] = None
+    user: Optional[UserInfoModel] = None
     merchant: Optional[MerchantModel] = None
-    virtual_accounts: Optional[List[MerchantModel]] = None
+    virtual_accounts: Optional[List[VirtualAccountModel]] = None
 
     class Config:
         orm_mode = True
