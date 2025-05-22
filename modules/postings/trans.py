@@ -150,7 +150,36 @@ def create_general_posting(db: Session, transaction_type_id: int=0, from_account
         'data': get_single_transaction_type_by_id(db=db, id=main_trans.id),
     }
 
+def create_gl_to_gl_posting(db: Session, transaction_type_id: int=0, from_account_number: str=None, to_account_number: str=None, amount: float=0, narration: str=None):
+    country_id = 0
+    country = get_single_country_by_code(db=db, code="NG")
+    if country is not None:
+        country_id = country.id
+    currency_id = 0
+    currency = get_single_currency_by_code(db=db, code="NGN")
+    if currency is not None:
+        currency_id = currency.id
+    transaction_type = get_single_transaction_type_by_id(db=db, id=transaction_type_id)
+    if transaction_type is None:
+        return {
+            'status': False,
+            'message': 'Transaction type not found',
+            'data': None,
+        }
+    else:
+        reference = generate_transaction_reference(tran_type=transaction_type.name)
+        from_gl = get_single_general_ledger_account_by_account_number(db=db, account_number=from_account_number)
+        to_gl = get_single_general_ledger_account_by_account_number(db=db, account_number=to_account_number)
+        type_action= transaction_type.action
+
 def retrieve_transactions(db: Session, filters: Dict={}):
+    if 'account_number' in filters:
+        gl = get_single_general_ledger_account_by_account_number(db=db, account_number=filters['account_number'])
+        if gl is not None:
+            filters['gl_id'] = gl.id
+        account = get_single_account_by_account_number(db=db, account_number=filters['account_number'])
+        if account is not None:
+            filters['account_id'] = account.id
     data = get_transactions(db=db, filters=filters)
     return paginate(data)
 
