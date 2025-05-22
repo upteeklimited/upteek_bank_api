@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from schemas.user import UserInfoModel, MerchantModel
 from schemas.misc import CountryModel, CurrencyModel
-from schemas.acct import GLModel, AccountModel
+from schemas.acct import GLModel, AccountInfoModel
 
 class TransactionTypeModel(BaseModel):
     id: int
@@ -108,7 +108,7 @@ class TransactionModel(BaseModel):
     merchant: Optional[MerchantModel] = None
     transaction_type: Optional[TransactionTypeModel] = None
     general_ledger: Optional[GLModel] = None
-    account: Optional[AccountModel] = None
+    account: Optional[AccountInfoModel] = None
 
     class Config:
         orm_mode = True

@@ -211,6 +211,29 @@ class AccountModel(BaseModel):
     class Config:
         orm_mode = True
 
+class AccountInfoModel(BaseModel):
+    id: int
+    account_type_id: Optional[int] = 0
+    user_id: Optional[int] = 0
+    merchant_id: Optional[int] = 0
+    account_name: Optional[str] = None
+    account_number: Optional[str] = None
+    nuban: Optional[str] = None
+    provider: Optional[str] = None
+    available_balance: Optional[float] = 0
+    ledger_balance: Optional[float] = 0
+    sms_notification: Optional[int] = 0
+    email_notification: Optional[int] = 0
+    is_primary: Optional[int] = 0
+    manager_id: Optional[int] = 0
+    last_active_at: Optional[datetime] = None
+    status: Optional[int] = 0
+    created_at: Optional[datetime] = None
+    account_type: Optional[AccountTypeModel] = None
+
+    class Config:
+        orm_mode = True
+
 class AccountResponseModel(BaseModel):
     status: bool
     message: str
