@@ -51,6 +51,7 @@ class GLModel(BaseModel):
     balance: Optional[float] = 0
     status: Optional[int] = 0
     created_at: Optional[datetime] = None
+    gl_type: Optional[GLTypeModel] = None
 
     class Config:
         orm_mode = True

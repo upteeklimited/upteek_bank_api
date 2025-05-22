@@ -27,6 +27,8 @@ class GeneralLedgerAccountType(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
+    gls = relationship('GeneralLedgerAccount', back_populates='gl_type', foreign_keys='GeneralLedgerAccount.type_id')
+
 def create_general_ledger_account_type(db: Session, country_id: int = 0, currency_id: int = 0, name: str = None, description: str = None, account_code: str = None, type_number: int = 0, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
     general_ledger_account_type = GeneralLedgerAccountType(country_id=country_id, currency_id=currency_id, name=name, description=description, account_code=account_code, type_number=type_number, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(general_ledger_account_type)

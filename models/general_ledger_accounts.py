@@ -1,6 +1,6 @@
 from typing import Dict
 from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
@@ -13,7 +13,7 @@ class GeneralLedgerAccount(Base):
     __tablename__ = "general_ledger_accounts"
      
     id = Column(BigInteger, primary_key=True, index=True)
-    type_id = Column(BigInteger, default=0)
+    type_id = Column(BigInteger, ForeignKey('general_ledger_account_types.id'))
     parent_id = Column(BigInteger, default=0)
     name = Column(String, nullable=True)
     account_number = Column(String, nullable=True)
@@ -27,6 +27,8 @@ class GeneralLedgerAccount(Base):
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
+
+    gl_type = relationship('GeneralLedgerAccountType', back_populates='gls', foreign_keys=[type_id])
 
 def create_general_ledger_account(db: Session, type_id: int = 0, parent_id: int = 0, name: str = None, account_number: str = None, description: str = None, balance: float = 0, status: int = 0, manager_id: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
     general_ledger_account = GeneralLedgerAccount(type_id=type_id, parent_id=parent_id, name=name, account_number=account_number, description=description, balance=balance, status=status, manager_id=manager_id, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
@@ -68,16 +70,16 @@ def force_delete_general_ledger_account(db: Session, id: int=0, commit: bool=Fal
     return True
 
 def get_single_general_ledger_account_by_id(db: Session, id: int=0):
-    return db.query(GeneralLedgerAccount).filter_by(id = id).first()
+    return db.query(GeneralLedgerAccount).options(joinedload(GeneralLedgerAccount.gl_type)).filter_by(id = id).first()
 
 def get_single_general_ledger_account_by_account_number(db: Session, account_number: str = None):
-    return db.query(GeneralLedgerAccount).filter_by(account_number = account_number).first()
+    return db.query(GeneralLedgerAccount).options(joinedload(GeneralLedgerAccount.gl_type)).filter_by(account_number = account_number).first()
 
 def get_last_general_ledger_account(db: Session):
     return db.query(GeneralLedgerAccount).order_by(desc(GeneralLedgerAccount.id)).first()
 
 def get_general_ledger_accounts(db: Session, filters: Dict={}):
-    query = db.query(GeneralLedgerAccount)
+    query = db.query(GeneralLedgerAccount).options(joinedload(GeneralLedgerAccount.gl_type))
     if 'type_id' in filters:
         query = query.filter_by(type_id = filters['type_id'])
     if 'parent_id' in filters:
