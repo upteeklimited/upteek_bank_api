@@ -83,4 +83,8 @@ def get_account_types(db: Session, filters: Dict={}):
     query = db.query(AccountType)
     if 'product_id' in filters:
         query = query.filter_by(product_id = filters['product_id'])
+    if 'name' in filters:
+        query = query.filter(AccountType.name.like("%" + filters['name'] + "%"))
+    if 'account_code' in filters:
+        query = query.filter(AccountType.account_code.like("%" + filters['account_code'] + "%"))
     return query.order_by(desc(AccountType.created_at))

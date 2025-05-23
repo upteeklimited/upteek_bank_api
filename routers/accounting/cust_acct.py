@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Depends
 from modules.authentication.auth import auth
-from modules.accounting.accts import retrieve_accounts, retrieve_single_account, retrieve_single_account_by_number, retrieve_virtual_accounts, retrive_single_virtual_account
-from database.schema import ErrorResponse, VirtualAccountModel, AccountModel, AccountResponseModel, VirtualAccountResponseModel
+from modules.accounting.accts import retrieve_account_types, retrieve_single_account_type, retrieve_single_account_type_by_code, retrieve_accounts, retrieve_single_account, retrieve_single_account_by_number, retrieve_virtual_accounts, retrive_single_virtual_account
+from database.schema import ErrorResponse, AccountTypeModel, AccountTypeResponseModel, VirtualAccountModel, AccountModel, AccountResponseModel, VirtualAccountResponseModel
 from database.db import get_db
 from sqlalchemy.orm import Session
 from fastapi_pagination import Page
@@ -10,6 +10,26 @@ router = APIRouter(
     prefix="/accounts",
     tags=["accounts"]
 )
+
+@router.get("/types", response_model=Page[AccountTypeModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
+async def types_get_all(request: Request, db: Session = Depends(get_db), product_id: int = 0, name: str = None, account_code: str = None):
+    filters = {}
+    if product_id is not None:
+        if  product_id > 0:
+            filters['product_id'] = product_id
+    if name is not None:
+        filters['name'] = name
+    if account_code is not None:
+        filters['account_code'] = account_code
+    return retrieve_account_types(db=db, filters=filters)
+
+@router.get("/types/get_single/{type_id}", response_model=AccountTypeResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
+async def types_get_single(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), type_id: int = 0):
+    return retrieve_single_account_type(db=db, account_type_id=type_id)
+
+@router.get("/types/get_single_by_code/{account_code}", response_model=AccountTypeResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
+async def types_get_single(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), account_code: str = None):
+    return retrieve_single_account_type_by_code(db=db, account_code=account_code)
 
 @router.get("/", response_model=Page[AccountModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
 async def get_all(request: Request, db: Session = Depends(get_db), account_type_id: int = 0, user_id: int = 0, merchant_id: int = 0, account_name: str = None, account_number: str = None, nuban: str = None, provider: str = None, manager_id: int = 0, status: int = 0):

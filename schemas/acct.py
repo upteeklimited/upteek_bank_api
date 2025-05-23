@@ -93,6 +93,14 @@ class AccountTypeModel(BaseModel):
     class Config:
         orm_mode = True
 
+class AccountTypeResponseModel(BaseModel):
+    status: bool
+    message: str
+    data: Optional[AccountTypeModel] = None
+
+    class Config:
+        orm_mode = True
+
 class FinancialProductModel(BaseModel):
     id: int
     name: str
