@@ -20,8 +20,20 @@ def generate_account_type_code(product_type: int=0, last_id: int=0):
 
 def get_gl_ids_by_filters(db, filters: Dict={}):
     query = filter_general_ledger_accounts(db=db, filters=filters)
-    return [gl.id for gl in query]
+    if len(query) == 0:
+        return []
+    else:
+        data = []
+        for account in query:
+            data.append(account.id)
+    return data
 
 def get_account_ids_by_filters(db, filters: Dict={}):
     query = filter_accounts(db=db, filters=filters)
-    return [account.id for account in query]
+    if len(query) == 0:
+        return []
+    else:
+        data = []
+        for account in query:
+            data.append(account.id)
+        return data
