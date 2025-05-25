@@ -16,7 +16,7 @@ async def general_posting(request: Request, fields: CreatePostingModel, db: Sess
     req = create_general_posting(db=db, transaction_type_id=fields.transaction_type_id, from_account_number=fields.from_account_number, to_account_number=fields.to_account_number, amount=fields.amount, narration=fields.narration)
     return req
 
-@router.get("/")
+@router.get("/", response_model=Page[TransactionModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
 async def get_all(request: Request, db: Session = Depends(get_db), user=Depends(auth.auth_wrapper), user_id: int = 0, merchant_id: int = 0, type_id: int = 0, reference: str = None, external_reference: str = None, account_number: str = None, account_name: str = None, from_date: str = None, to_date: str = None, status: int = 0):
     filters = {}
     if user_id is not None:

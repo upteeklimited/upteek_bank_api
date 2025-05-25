@@ -20,7 +20,6 @@ def generate_account_type_code(product_type: int=0, last_id: int=0):
 
 def get_gl_ids_by_filters(db, filters: Dict={}):
     query = filter_general_ledger_accounts(db=db, filters=filters)
-    return query
     if len(query) == 0:
         return []
     else:
@@ -31,7 +30,6 @@ def get_gl_ids_by_filters(db, filters: Dict={}):
 
 def get_account_ids_by_filters(db, filters: Dict={}):
     query = filter_accounts(db=db, filters=filters)
-    return query
     if len(query) == 0:
         return []
     else:
