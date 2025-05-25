@@ -188,6 +188,11 @@ def retrieve_transactions(db: Session, filters: Dict={}):
         accounts = get_account_ids_by_filters(db=db, filters={'account_name': filters['account_name']})
         if len(accounts) > 0:
             filters['account_ids'] = accounts
+        return {
+            'gls': gls,
+            'accounts': accounts,
+            'filters': filters,
+        }
     if 'from_date' in filters:
         if filters['from_date'] is not None:
             filters['from_date'] = dateparser.parse(filters['from_date'])
