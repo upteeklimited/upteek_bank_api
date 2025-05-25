@@ -17,7 +17,7 @@ async def general_posting(request: Request, fields: CreatePostingModel, db: Sess
     return req
 
 @router.get("/", response_model=Page[TransactionModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def get_all(request: Request, db: Session = Depends(get_db), user=Depends(auth.auth_wrapper), user_id: int = 0, merchant_id: int = 0, type_id: int = 0, reference: str = None, external_reference: str = None, account_number: str = None, from_date: str = None, to_date: str = None, status: int = 0):
+async def get_all(request: Request, db: Session = Depends(get_db), user=Depends(auth.auth_wrapper), user_id: int = 0, merchant_id: int = 0, type_id: int = 0, reference: str = None, external_reference: str = None, account_number: str = None, account_name: str = None, from_date: str = None, to_date: str = None, status: int = 0):
     filters = {}
     if user_id is not None:
         if  user_id > 0:
@@ -34,6 +34,8 @@ async def get_all(request: Request, db: Session = Depends(get_db), user=Depends(
         filters['external_reference'] = external_reference
     if account_number is not None:
         filters['account_number'] = account_number
+    if account_name is not None:
+        filters['account_name'] = account_name
     if from_date is not None:
         filters['from_date'] = from_date
     if to_date is not None:

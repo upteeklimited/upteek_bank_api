@@ -76,6 +76,7 @@ def get_single_general_ledger_account_by_id(db: Session, id: int=0):
 def get_single_general_ledger_account_by_account_number(db: Session, account_number: str = None):
     return db.query(GeneralLedgerAccount).options(joinedload(GeneralLedgerAccount.gl_type)).filter_by(account_number = account_number).first()
 
+
 def get_last_general_ledger_account(db: Session):
     return db.query(GeneralLedgerAccount).order_by(desc(GeneralLedgerAccount.id)).first()
 
@@ -94,3 +95,19 @@ def get_general_ledger_accounts(db: Session, filters: Dict={}):
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(GeneralLedgerAccount.created_at))
+
+def filter_general_ledger_accounts(db: Session, filters: Dict={}):
+    query = db.query(GeneralLedgerAccount)
+    if 'type_id' in filters:
+        query = query.filter_by(type_id = filters['type_id'])
+    if 'parent_id' in filters:
+        query = query.filter_by(parent_id = filters['parent_id'])
+    if 'manager_id' in filters:
+        query = query.filter_by(manager_id = filters['manager_id'])
+    if 'name' in filters:
+        query = query.filter(GeneralLedgerAccount.name.like('%'+filters['name']+'%'))
+    if 'account_number' in filters:
+        query = query.filter(GeneralLedgerAccount.account_number.like('%'+filters['account_number']+'%'))
+    if 'status' in filters:
+        query = query.filter_by(status = filters['status'])
+    return query.order_by(desc(GeneralLedgerAccount.created_at)).all()

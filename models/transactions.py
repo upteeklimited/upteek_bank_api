@@ -125,8 +125,12 @@ def get_transactions(db: Session, filters: Dict={}):
         query = query.filter_by(merchant_id = filters['merchant_id'])
     if 'gl_id' in filters:
         query = query.filter_by(gl_id = filters['gl_id'])
+    if 'gl_ids' in filters:
+        query = query.filter(Transaction.gl_id.in_(filters['gl_ids']))
     if 'account_id' in filters:
         query = query.filter_by(account_id = filters['account_id'])
+    if 'account_ids' in filters:
+        query = query.filter(Transaction.account_id.in_(filters['account_ids']))
     if 'type_id' in filters:
         query = query.filter_by(type_id = filters['type_id'])
     if 'order_id' in filters:

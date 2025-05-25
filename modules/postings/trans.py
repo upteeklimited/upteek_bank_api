@@ -2,10 +2,10 @@ from typing import Dict
 import dateparser
 from sqlalchemy.orm import Session
 from database.model import debit_account, create_account, debit_general_ledger_account, credit_general_ledger_account, credit_account, create_transaction, get_single_account_by_account_number, get_single_general_ledger_account_by_account_number, get_single_transaction_type_by_id, get_single_currency_by_code, get_single_country_by_code, get_single_transaction_by_id, get_single_transaction_by_reference, get_transactions
-from modules.utils.tools import generate_transaction_reference
+from modules.utils.tools import generate_transaction_reference, process_schema_dictionary
+from modules.utils.acct import get_gl_ids_by_filters, get_account_ids_by_filters
 from settings.constants import TRANSACTION_ACTIONS
 from fastapi_pagination.ext.sqlalchemy import paginate
-from modules.utils.tools import process_schema_dictionary
 
 def create_general_posting(db: Session, transaction_type_id: int=0, from_account_number: str=None, to_account_number: str=None, amount: float=0, narration: str=None):
     country_id = 0
@@ -181,6 +181,13 @@ def retrieve_transactions(db: Session, filters: Dict={}):
         account = get_single_account_by_account_number(db=db, account_number=filters['account_number'])
         if account is not None:
             filters['account_id'] = account.id
+    if 'account_name' in filters:
+        gls = get_gl_ids_by_filters(db=db, filters={'name': filters['account_name']})
+        if len(gls) > 0:
+            filters['gl_id'] = gls
+        accounts = get_account_ids_by_filters(db=db, filters={'account_name': filters['account_name']})
+        if len(accounts) > 0:
+            filters['account_id'] = accounts
     if 'from_date' in filters:
         if filters['from_date'] is not None:
             filters['from_date'] = dateparser.parse(filters['from_date'])
