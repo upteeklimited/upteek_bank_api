@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Depends
 from modules.authentication.auth import auth
-from modules.postings.trans import create_general_posting, retrieve_transactions, retrieve_transaction_by_id
-from database.schema import ErrorResponse, PlainResponse, CreatePostingModel, TransactionModel, TransactionResponseModel
+from modules.postings.trans import retrieve_accounts, create_general_posting, retrieve_transactions, retrieve_transaction_by_id
+from database.schema import ErrorResponse, PlainResponse, CreatePostingModel, TransactionAccountModel, TransactionModel, TransactionResponseModel
 from database.db import get_db
 from sqlalchemy.orm import Session
 from fastapi_pagination import Page
@@ -10,6 +10,10 @@ router = APIRouter(
     prefix="/transactions",
     tags=["transactions"]
 )
+
+@router.get("/search_accounts/{search}", response_model=TransactionAccountModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
+async def search_accounts(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), search: str = None):
+    return retrieve_accounts(db=db, search=search)
 
 @router.post("/general_posting", response_model=TransactionResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
 async def general_posting(request: Request, fields: CreatePostingModel, db: Session = Depends(get_db), user=Depends(auth.auth_wrapper)):

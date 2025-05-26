@@ -76,6 +76,17 @@ class CreatePostingModel(BaseModel):
     class Config:
         orm_mode = True
 
+class TransactionAccountModel(BaseModel):
+    id: int
+    account_name: Optional[str] = None
+    account_number: Optional[str] = None
+    nuban: Optional[str] = None
+    balance: Optional[float] = None
+    is_gl: Optional[bool] = None
+
+    class Config:
+        orm_mode = True
+
 class TransactionModel(BaseModel):
     id: int
     country_id: Optional[int] = 0

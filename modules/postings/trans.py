@@ -1,7 +1,7 @@
 from typing import Dict
 import dateparser
 from sqlalchemy.orm import Session
-from database.model import debit_account, create_account, debit_general_ledger_account, credit_general_ledger_account, credit_account, create_transaction, get_single_account_by_account_number, get_single_general_ledger_account_by_account_number, get_single_transaction_type_by_id, get_single_currency_by_code, get_single_country_by_code, get_single_transaction_by_id, get_single_transaction_by_reference, get_transactions
+from database.model import debit_account, create_account, debit_general_ledger_account, credit_general_ledger_account, credit_account, create_transaction, get_single_account_by_account_number, get_single_general_ledger_account_by_account_number, get_single_transaction_type_by_id, get_single_currency_by_code, get_single_country_by_code, get_single_transaction_by_id, get_single_transaction_by_reference, get_transactions, search_accounts, search_general_ledger_accounts
 from modules.utils.tools import generate_transaction_reference, process_schema_dictionary
 from modules.utils.acct import get_gl_ids_by_filters, get_account_ids_by_filters
 from settings.constants import TRANSACTION_ACTIONS
@@ -170,6 +170,33 @@ def create_gl_to_gl_posting(db: Session, transaction_type_id: int=0, from_accoun
         from_gl = get_single_general_ledger_account_by_account_number(db=db, account_number=from_account_number)
         to_gl = get_single_general_ledger_account_by_account_number(db=db, account_number=to_account_number)
         type_action = transaction_type.action
+
+def retrieve_accounts(db: Session, search: str=None):
+    resp = []
+    if search is not None:
+        accounts = search_accounts(db=db, search=search)
+        if len(accounts) > 0:
+            for account in accounts:
+                resp.append({
+                    'id': account.id,
+                    'account_name': account.account_name,
+                    'account_number': account.account_number,
+                    'nuban': account.nuban,
+                    'balance': account.available_balance,
+                    'is_gl': False
+                })
+        gls = search_general_ledger_accounts(db=db, search=search)
+        if len(gls) > 0:
+            for gl in gls:
+                resp.append({
+                    'id': gl.id,
+                    'account_name': gl.name,
+                    'account_number': gl.account_number,
+                    'nuban': None,
+                    'balance': gl.balance,
+                    'is_gl': True
+                })
+    return resp
 
 def retrieve_transactions(db: Session, filters: Dict={}):
     if 'account_number' in filters:

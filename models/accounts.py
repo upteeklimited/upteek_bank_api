@@ -134,3 +134,9 @@ def filter_accounts(db: Session, filters: Dict={}):
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(Account.created_at)).all()
+
+def search_accounts(db: Session, search: str = None):
+    query = db.query(Account)
+    if search is not None:
+        query = query.filter(or_(Account.account_name.like("%" + search + "%"), Account.account_number.like("%" + search + "%"), Account.nuban.like("%" + search + "%"), Account.provider.like("%" + search + "%")))
+    return query.order_by(desc(Account.created_at)).all()
