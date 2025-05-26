@@ -29,8 +29,6 @@ def create_general_posting(db: Session, transaction_type_id: int=0, from_account
         to_gl = get_single_general_ledger_account_by_account_number(db=db, account_number=to_account_number)
         from_acct = get_single_account_by_account_number(db=db, account_number=from_account_number)
         to_acct = get_single_account_by_account_number(db=db, account_number=to_account_number)
-        trans_status = False
-        trans_message = ""
         main_trans = None
         from_done = False
         to_done = False
@@ -72,7 +70,7 @@ def create_general_posting(db: Session, transaction_type_id: int=0, from_account
                 to_done = True
             if to_acct is not None:
                 ca_prev_balance = to_acct.available_balance
-                ca = credit_account(account_id=to_acct.id, amount=amount)
+                ca = credit_account(db=db, account_id=to_acct.id, amount=amount)
                 if ca['status'] == False:
                     return {
                         'status': False,
@@ -118,7 +116,7 @@ def create_general_posting(db: Session, transaction_type_id: int=0, from_account
                 to_done = True
             if to_acct is not None:
                 ca_prev_balance = to_acct.available_balance
-                ca = debit_account(account_id=to_acct.id, amount=amount, override=True)
+                ca = debit_account(db=db, account_id=to_acct.id, amount=amount, override=True)
                 if ca['status'] == False:
                     return {
                         'status': False,
@@ -171,7 +169,7 @@ def create_gl_to_gl_posting(db: Session, transaction_type_id: int=0, from_accoun
         reference = generate_transaction_reference(tran_type=transaction_type.name)
         from_gl = get_single_general_ledger_account_by_account_number(db=db, account_number=from_account_number)
         to_gl = get_single_general_ledger_account_by_account_number(db=db, account_number=to_account_number)
-        type_action= transaction_type.action
+        type_action = transaction_type.action
 
 def retrieve_transactions(db: Session, filters: Dict={}):
     if 'account_number' in filters:
