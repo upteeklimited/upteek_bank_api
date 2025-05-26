@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Request, Depends
 from modules.authentication.auth import auth
 from modules.postings.trans import retrieve_accounts, create_general_posting, retrieve_transactions, retrieve_transaction_by_id
@@ -11,7 +12,7 @@ router = APIRouter(
     tags=["transactions"]
 )
 
-@router.get("/search_accounts/{search}", response_model=TransactionAccountModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
+@router.get("/search_accounts/{search}", response_model=List[TransactionAccountModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
 async def search_accounts(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), search: str = None):
     return retrieve_accounts(db=db, search=search)
 
