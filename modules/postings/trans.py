@@ -131,24 +131,26 @@ def create_general_posting(db: Session, transaction_type_id: int=0, from_account
             'message': str(from_account_number) + " not found",
             'data': None
         }
-    if to_done == False:
-        return {
-            'status': False,
-            'message': str(to_account_number) + " not found",
-            'data': None
-        }
-    if main_trans is None:
-        return {
-            'status': False,
-            'message': 'Unexpected transaction failure',
-            'data': None
-        }
     else:
-        return {
-            'status': True,
-            'message': 'Success',
-            'data': get_single_transaction_type_by_id(db=db, id=main_trans.id),
-        }
+        if to_done == False:
+            return {
+                'status': False,
+                'message': str(to_account_number) + " not found",
+                'data': None
+            }
+        else:
+            if main_trans is None:
+                return {
+                    'status': False,
+                    'message': 'Unexpected transaction failure',
+                    'data': None
+                }
+            else:
+                return {
+                    'status': True,
+                    'message': 'Success',
+                    'data': main_trans,
+                }
 
 def create_gl_to_gl_posting(db: Session, transaction_type_id: int=0, from_account_number: str=None, to_account_number: str=None, amount: float=0, narration: str=None):
     country_id = 0

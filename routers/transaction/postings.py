@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Request, Depends, HTTPException
 from modules.authentication.auth import auth
 from modules.postings.trans import retrieve_accounts, create_general_posting, retrieve_transactions, retrieve_transaction_by_id
-from database.schema import ErrorResponse, PlainResponse, CreatePostingModel, TransactionAccountModel, TransactionModel, TransactionResponseModel
+from database.schema import ErrorResponse, PlainResponse, CreatePostingModel, TransactionAccountModel, TransactionModel, TransactionResponseModel, NewTransactionResponseModel
 from database.db import get_db
 from sqlalchemy.orm import Session
 from fastapi_pagination import Page
@@ -16,7 +16,7 @@ router = APIRouter(
 async def search_accounts(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), search: str = None):
     return retrieve_accounts(db=db, search=search)
 
-@router.post("/general_posting", response_model=TransactionResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
+@router.post("/general_posting", response_model=NewTransactionResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
 async def general_posting(request: Request, fields: CreatePostingModel, db: Session = Depends(get_db), user=Depends(auth.auth_wrapper)):
     req = create_general_posting(db=db, transaction_type_id=fields.transaction_type_id, from_account_number=fields.from_account_number, to_account_number=fields.to_account_number, amount=fields.amount, narration=fields.narration)
     if req is None:

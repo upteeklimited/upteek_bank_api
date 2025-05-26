@@ -6,5 +6,5 @@ from schemas.misc import CountryModel, CountryResponseModel, CurrencyModel, Curr
 from schemas.ord import OrderedProductModel, CreateOrderRequest, OrderModel, OrderMainModel, NewOrderResponse, OrderResponse
 from schemas.pro import UpdateBasicProfileRequestModel, parse_update_basic_profile_payload, UpdatePasswordRequestModel, UpdateSettingsRequestModel, UpdateAddressRequestModel, SmileIDPayloadRequestModel, SmileIDGenerateWebTokenRequestModel, SmileIDWebTokenResponse, SmileIDComplainceFinaliseResponse, SmileIDMerchantComplainceFinaliseResponse
 from schemas.resp import ErrorResponse, PlainResponse, PlainResponseData
-from schemas.trans import TransactionTypeModel, CreateTransTypeModel, UpdateTransTypeModel, TransTypeResponseModel, CreatePostingModel, TransactionAccountModel, TransactionModel, TransactionResponseModel
+from schemas.trans import TransactionTypeModel, CreateTransTypeModel, UpdateTransTypeModel, TransTypeResponseModel, CreatePostingModel, TransactionAccountModel, TransactionModel, TransactionResponseModel, NewTransactionResponseModel
 from schemas.user import UserMainModel, UserMainResponseModel, AuthResponseModel, MainAuthResponseModel, UserDetailsResponseModel, UserResponseModel, CreateUserModel, UpdateUserModel, UpdateUserPasswordModel

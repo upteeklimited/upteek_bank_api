@@ -124,10 +124,36 @@ class TransactionModel(BaseModel):
     class Config:
         orm_mode = True
 
+class TransactionInfoModel(BaseModel):
+    id: int
+    country_id: Optional[int] = 0
+    currency_id: Optional[int] = 0
+    user_id: Optional[int] = 0
+    merchant_id: Optional[int] = 0
+    type_id: Optional[int] = 0
+    reference: Optional[str] = None
+    external_reference: Optional[str] = None
+    description: Optional[str] = None
+    narration: Optional[str] = None
+    amount: Optional[float] = 0
+    status: Optional[int] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True
+
 class TransactionResponseModel(BaseModel):
     status: bool
     message: str
     data: Optional[TransactionModel] = None
+
+    class Config:
+        orm_mode = True
+
+class NewTransactionResponseModel(BaseModel):
+    status: bool
+    message: str
+    data: Optional[TransactionInfoModel] = None
 
     class Config:
         orm_mode = True
