@@ -203,24 +203,16 @@ def retrieve_transactions(db: Session, filters: Dict={}):
         gl = get_single_general_ledger_account_by_account_number(db=db, account_number=filters['account_number'])
         if gl is not None:
             filters['gl_id'] = gl.id
-        else:
-            filters['gl_id'] = 999999999999
         account = get_single_account_by_account_number(db=db, account_number=filters['account_number'])
         if account is not None:
             filters['account_id'] = account.id
-        else:
-            filters['account_id'] = 999999999999
     if 'account_name' in filters:
         gls = get_gl_ids_by_filters(db=db, filters={'name': filters['account_name']})
         if len(gls) > 0:
             filters['gl_ids'] = gls
-        else:
-            filters['gl_ids'] = [999999999999]
         accounts = get_account_ids_by_filters(db=db, filters={'account_name': filters['account_name']})
         if len(accounts) > 0:
             filters['account_ids'] = accounts
-        else:
-            filters['account_ids'] = [999999999999]
     if 'from_date' in filters:
         if filters['from_date'] is not None:
             filters['from_date'] = dateparser.parse(filters['from_date'])
