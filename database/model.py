@@ -114,7 +114,7 @@ def debit_account(db: Session, account_id: int=0, amount: float=0, override: boo
             'message': 'Account not found',
             'data': None,
         }
-    if (account.available_balance < amount) and override == True:
+    if (account.available_balance < amount) and override == False:
         return {
             'status': False,
             'message': 'Insufficient balance',
