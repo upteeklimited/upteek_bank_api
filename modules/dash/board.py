@@ -9,7 +9,7 @@ def get_dashboard_data(db: Session):
     customers_and_merchants_count = count_customers_and_merchants(db=db)
     total_deposits = sum_of_deposits(db=db)
     total_deposits_count = count_of_deposits(db=db)
-    total_loans = sum_of_loans(db=db, filters={'status': 1})
+    active_loans = sum_of_loans(db=db, filters={'status': 1})
     total_accounts = count_accounts(db=db)
     data =  {
         "customers_count": customers_count,
@@ -17,7 +17,7 @@ def get_dashboard_data(db: Session):
         "customers_and_merchants_count": customers_and_merchants_count,
         "total_deposits": total_deposits,
         "total_deposits_count": total_deposits_count,
-        "total_loans": total_loans,
+        "active_loans": active_loans,
         "total_accounts": total_accounts
     }
     return {
