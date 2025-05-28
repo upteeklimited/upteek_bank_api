@@ -1,7 +1,7 @@
 from typing import Dict
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc, func
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import func
+# from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
@@ -100,3 +100,11 @@ def get_loans(db: Session, filters: Dict={}):
     if 'card_id' in filters:
         query = query.filter_by(card_id = filters['card_id'])
     return query.order_by(desc(Loan.created_at))
+
+def sum_of_loans(db: Session, filters: Dict={}):
+    query = db.query(func.sum(Loan.amount))
+    if 'user_id' in filters:
+        query = query.filter_by(user_id = filters['user_id'])
+    if 'status' in filters:
+        query = query.filter_by(status = filters['status'])
+    return query.scalar() or 0

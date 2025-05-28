@@ -152,28 +152,6 @@ def create_general_posting(db: Session, transaction_type_id: int=0, from_account
                     'data': main_trans,
                 }
 
-def create_gl_to_gl_posting(db: Session, transaction_type_id: int=0, from_account_number: str=None, to_account_number: str=None, amount: float=0, narration: str=None):
-    country_id = 0
-    country = get_single_country_by_code(db=db, code="NG")
-    if country is not None:
-        country_id = country.id
-    currency_id = 0
-    currency = get_single_currency_by_code(db=db, code="NGN")
-    if currency is not None:
-        currency_id = currency.id
-    transaction_type = get_single_transaction_type_by_id(db=db, id=transaction_type_id)
-    if transaction_type is None:
-        return {
-            'status': False,
-            'message': 'Transaction type not found',
-            'data': None,
-        }
-    else:
-        reference = generate_transaction_reference(tran_type=transaction_type.name)
-        from_gl = get_single_general_ledger_account_by_account_number(db=db, account_number=from_account_number)
-        to_gl = get_single_general_ledger_account_by_account_number(db=db, account_number=to_account_number)
-        type_action = transaction_type.action
-
 def retrieve_accounts(db: Session, search: str=None):
     resp = []
     if search is not None:
@@ -209,6 +187,9 @@ def retrieve_transactions(db: Session, filters: Dict={}):
         account = get_single_account_by_account_number(db=db, account_number=filters['account_number'])
         if account is not None:
             filters['account_id'] = account.id
+        if 'gl_id' not in filters and 'account_id' not in filters:
+            filters['account_id'] = 999999999
+            filters['gl_id'] = 999999999
     if 'account_name' in filters:
         gls = get_gl_ids_by_filters(db=db, filters={'name': filters['account_name']})
         if len(gls) > 0:
@@ -216,6 +197,9 @@ def retrieve_transactions(db: Session, filters: Dict={}):
         accounts = get_account_ids_by_filters(db=db, filters={'account_name': filters['account_name']})
         if len(accounts) > 0:
             filters['account_ids'] = accounts
+        if 'gl_ids' not in filters and 'account_ids' not in filters:
+            filters['account_ids'] = [999999999]
+            filters['gl_ids'] = [999999999]
     if 'from_date' in filters:
         if filters['from_date'] is not None:
             filters['from_date'] = dateparser.parse(filters['from_date'])

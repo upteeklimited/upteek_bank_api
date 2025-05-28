@@ -32,7 +32,7 @@ async def types_get_single(request: Request, user=Depends(auth.auth_wrapper), db
     return retrieve_single_account_type_by_code(db=db, account_code=account_code)
 
 @router.get("/", response_model=Page[AccountModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def get_all(request: Request, db: Session = Depends(get_db), account_type_id: int = 0, user_id: int = 0, merchant_id: int = 0, account_name: str = None, account_number: str = None, nuban: str = None, provider: str = None, manager_id: int = 0, status: int = 0):
+async def get_all(request: Request, db: Session = Depends(get_db), account_type_id: int = 0, product_id: int = 0, user_id: int = 0, merchant_id: int = 0, account_name: str = None, account_number: str = None, nuban: str = None, provider: str = None, manager_id: int = 0, status: int = 0):
     filters = {}
     if account_name is not None:
         filters['account_name'] = account_name
@@ -48,6 +48,9 @@ async def get_all(request: Request, db: Session = Depends(get_db), account_type_
     if account_type_id is not None:
         if  account_type_id > 0:
             filters['account_type_id'] = account_type_id
+    if product_id is not None:
+        if  product_id > 0:
+            filters['product_id'] = product_id
     if user_id is not None:
         if  user_id > 0:
             filters['user_id'] = user_id

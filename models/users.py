@@ -155,3 +155,12 @@ def count_user_by_username_and_user_type(db: Session, username: str = None, user
 
 def count_user_by_phone_number_and_user_type(db: Session, phone_number: str = None, user_type: int = 0):
     return db.query(User).filter(and_(User.phone_number == phone_number, User.user_type == user_type)).count()
+
+def count_customers(db: Session):
+    return db.query(User).filter(User.user_type == USER_TYPES['customer']['num']).filter(User.deleted_at == None).count()
+
+def count_merchants(db: Session):
+    return db.query(User).filter_by(user_type = USER_TYPES['merchant']['num']).filter(User.deleted_at == None).count()
+
+def count_customers_and_merchants(db: Session):
+    return db.query(User).filter(or_(User.user_type == USER_TYPES['merchant']['num'], USER_TYPES['customer']['num'])).filter(User.deleted_at == None).count()

@@ -1,5 +1,5 @@
 from typing import Dict
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc, select
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import and_, or_
@@ -7,6 +7,8 @@ from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
 from sqlalchemy.orm import relationship
 from models.users import User
+from models.account_types import AccountType
+from models.financial_products import FinancialProduct
 
 
 class Account(Base):
@@ -95,6 +97,8 @@ def get_accounts(db: Session, filters: Dict={}):
     query = db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user).joinedload(User.profile), joinedload(Account.merchant))
     if 'account_type_id' in filters:
         query = query.filter_by(account_type_id = filters['account_type_id'])
+    if 'product_id' in filters:
+        query = query.join(AccountType).filter(AccountType.product_id == filters['product_id'])
     if 'user_id' in filters:
         query = query.filter_by(user_id = filters['user_id'])
     if 'merchant_id' in filters:
@@ -117,6 +121,8 @@ def filter_accounts(db: Session, filters: Dict={}):
     query = db.query(Account)
     if 'account_type_id' in filters:
         query = query.filter_by(account_type_id = filters['account_type_id'])
+    if 'product_id' in filters:
+        query = query.join(AccountType).filter(AccountType.product_id == filters['product_id'])
     if 'user_id' in filters:
         query = query.filter_by(user_id = filters['user_id'])
     if 'merchant_id' in filters:
@@ -140,3 +146,31 @@ def search_accounts(db: Session, search: str = None):
     if search is not None:
         query = query.filter(or_(Account.account_name.like("%" + search + "%"), Account.account_number.like("%" + search + "%"), Account.nuban.like("%" + search + "%"), Account.provider.like("%" + search + "%")))
     return query.order_by(desc(Account.created_at)).all()
+
+def count_accounts(db: Session, filters: Dict={}):
+    query = db.query(Account)
+    if 'account_type_id' in filters:
+        query = query.filter_by(account_type_id = filters['account_type_id'])
+    if 'product_id' in filters:
+        query = query.join(AccountType).filter(AccountType.product_id == filters['product_id'])
+    if 'product_type' in filters:
+        query = query.join(AccountType).join(FinancialProduct).filter(FinancialProduct.product_type == filters['product_type'])
+    if 'product_types' in filters:
+        query = query.join(AccountType).join(FinancialProduct).filter(FinancialProduct.product_type.in_(filters['product_types']))
+    if 'user_id' in filters:
+        query = query.filter_by(user_id = filters['user_id'])
+    if 'merchant_id' in filters:
+        query = query.filter_by(merchant_id = filters['merchant_id'])
+    if 'account_name' in filters:
+        query = query.filter(Account.account_name.like("%" + filters['account_name'] + "%"))
+    if 'account_number' in filters:
+        query = query.filter(Account.account_number.like("%" + filters['account_number'] + "%"))
+    if 'nuban' in filters:
+        query = query.filter(Account.nuban.like("%" + filters['nuban'] + "%"))
+    if 'provider' in filters:
+        query = query.filter(Account.provider.like("%" + filters['provider'] + "%"))
+    if 'manager_id' in filters:
+        query = query.filter_by(manager_id = filters['manager_id'])
+    if 'status' in filters:
+        query = query.filter_by(status = filters['status'])
+    return query.count()
