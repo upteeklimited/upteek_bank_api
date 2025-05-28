@@ -163,4 +163,4 @@ def count_merchants(db: Session):
     return db.query(User).filter_by(user_type = USER_TYPES['merchant']['num']).filter(User.deleted_at == None).count()
 
 def count_customers_and_merchants(db: Session):
-    return db.query(User).filter(or_(User.user_type == USER_TYPES['merchant']['num'], USER_TYPES['customer']['num'])).filter(User.deleted_at == None).count()
+    return db.query(User).filter(or_(User.user_type == USER_TYPES['merchant']['num'], User.user_type == USER_TYPES['customer']['num'])).filter(User.deleted_at == None).count()
