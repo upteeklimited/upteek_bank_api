@@ -22,3 +22,19 @@ class DashboardDataResponseModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+class DashboardGraphDataModel(BaseModel):
+    month: str
+    credit: int
+    debit: int
+
+    class Config:
+        orm_mode = True
+
+class DashboardGraphDataResponseModel(BaseModel):
+    status: bool
+    message: str
+    data: Optional[List[DashboardGraphDataModel]] = None
+
+    class Config:
+        orm_mode = True

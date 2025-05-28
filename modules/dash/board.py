@@ -1,6 +1,7 @@
 from typing import Dict
 from sqlalchemy.orm import Session
-from database.model import count_customers, count_merchants, count_customers_and_merchants, sum_of_deposits, count_of_deposits, sum_of_loans, count_accounts
+from database.model import count_customers, count_merchants, count_customers_and_merchants, sum_of_deposits, count_of_deposits, sum_of_loans, count_accounts, get_dashboard_transactions_data
+from calendar import month_name
 
 
 def get_dashboard_data(db: Session):
@@ -24,4 +25,21 @@ def get_dashboard_data(db: Session):
         'status': True,
         'message': 'Success',
         'data': data
+    }
+
+def generate_dashboard_graph_data(db: Session):
+    month = 6
+    results = get_dashboard_transactions_data(db=db, month=month)
+    graph_data = []
+    for result in results:
+        month_name_str = month_name[int(result.month)]
+        graph_data.append({
+            "month": month_name_str,
+            "credit": int(result.credit or 0),
+            "debit": int(result.debit or 0)
+        })
+    return {
+        'status': True,
+        'message': 'Success',
+        'data': graph_data
     }

@@ -1,13 +1,13 @@
 from typing import Dict
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc, func, case, extract
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
 from sqlalchemy.orm import relationship
 from models.users import User
 from models.general_ledger_accounts import GeneralLedgerAccount
+from datetime import datetime, timedelta
 
 
 class Transaction(Base):
@@ -157,3 +157,33 @@ def get_transactions(db: Session, filters: Dict={}):
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(Transaction.created_at))
+
+def get_dashboard_transactions_data(db: Session, month: int=0):
+    months_ago = datetime.now() - timedelta(days=(30 * month))
+    # Query to get monthly aggregated data
+    query = db.query(
+        extract('year', Transaction.created_at).label('year'),
+        extract('month', Transaction.created_at).label('month'),
+        func.sum(
+            case(
+                (Transaction.action == 2, Transaction.amount),
+                else_=0
+            )
+        ).label('credit'),
+        func.sum(
+            case(
+                (Transaction.action == 1, Transaction.amount),
+                else_=0
+            )
+        ).label('debit')
+    ).filter(
+        Transaction.created_at >= months_ago,
+        Transaction.deleted_at.is_(None)  # Exclude soft-deleted records
+    ).group_by(
+        extract('year', Transaction.created_at),
+        extract('month', Transaction.created_at)
+    ).order_by(
+        extract('year', Transaction.created_at),
+        extract('month', Transaction.created_at)
+    )
+    return query.all()
