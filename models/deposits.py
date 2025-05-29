@@ -23,7 +23,7 @@ class Deposit(Base):
     yield_amount = Column(Float, default=0)
     current_value = Column(Float, default=0)
     withholding_tax = Column(Float, default=0)
-    VAT = Column(Float, default=0)
+    vat = Column(Float, default=0)
     receiving_account_principal_id = Column(BigInteger, default=0)
     receiving_account_interest_id = Column(BigInteger, default=0)
     rollover_principal = Column(Float, default=0)
@@ -43,8 +43,8 @@ class Deposit(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_deposit(db: Session, user_id: int = 0, merchant_id: int = 0, gl_id: int = 0, account_id: int = 0, amount: float = 0, rate: float = 0, tenure: int = 0, yield_amount: float = 0, current_value: float = 0, withholding_tax: float = 0, VAT: float = 0, receiving_account_principal_id: int = 0, receiving_account_interest_id: int = 0, rollover_principal: float = 0, rollover_interest: float = 0, rollover_at_maturity: int = 0, liquidation_charge: float = 0, rollover_count: int = 0, status: int = 0, meta_data: str = None, created_by: int = 0, authorized_by: int = 0, matured_at: str = None, liquidated_at: str = None, authorized_at: str = None, rollover_at: str = None, deleted_at: str = None, commit: bool=False):
-    deposit = Deposit(user_id=user_id, merchant_id=merchant_id, gl_id=gl_id, account_id=account_id, amount=amount, rate=rate, tenure=tenure, yield_amount=yield_amount, current_value=current_value, withholding_tax=withholding_tax, VAT=VAT, receiving_account_principal_id=receiving_account_principal_id, receiving_account_interest_id=receiving_account_interest_id, rollover_principal=rollover_principal, rollover_interest=rollover_interest, rollover_at_maturity=rollover_at_maturity, liquidation_charge=liquidation_charge, rollover_count=rollover_count, status=status, meta_data=meta_data, created_by=created_by, authorized_by=authorized_by, matured_at=matured_at, liquidated_at=liquidated_at, authorized_at=authorized_at, rollover_at=rollover_at, deleted_at=deleted_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_deposit(db: Session, user_id: int = 0, merchant_id: int = 0, gl_id: int = 0, account_id: int = 0, amount: float = 0, rate: float = 0, tenure: int = 0, yield_amount: float = 0, current_value: float = 0, withholding_tax: float = 0, vat: float = 0, receiving_account_principal_id: int = 0, receiving_account_interest_id: int = 0, rollover_principal: float = 0, rollover_interest: float = 0, rollover_at_maturity: int = 0, liquidation_charge: float = 0, rollover_count: int = 0, status: int = 0, meta_data: str = None, created_by: int = 0, authorized_by: int = 0, matured_at: str = None, liquidated_at: str = None, authorized_at: str = None, rollover_at: str = None, deleted_at: str = None, commit: bool=False):
+    deposit = Deposit(user_id=user_id, merchant_id=merchant_id, gl_id=gl_id, account_id=account_id, amount=amount, rate=rate, tenure=tenure, yield_amount=yield_amount, current_value=current_value, withholding_tax=withholding_tax, vat=vat, receiving_account_principal_id=receiving_account_principal_id, receiving_account_interest_id=receiving_account_interest_id, rollover_principal=rollover_principal, rollover_interest=rollover_interest, rollover_at_maturity=rollover_at_maturity, liquidation_charge=liquidation_charge, rollover_count=rollover_count, status=status, meta_data=meta_data, created_by=created_by, authorized_by=authorized_by, matured_at=matured_at, liquidated_at=liquidated_at, authorized_at=authorized_at, rollover_at=rollover_at, deleted_at=deleted_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(deposit)
     if commit == False:
         db.flush()
