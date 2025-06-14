@@ -13,8 +13,11 @@ class FinancialInstitution(Base):
     __tablename__ = "financial_institutions"
      
     id = Column(BigInteger, primary_key=True, index=True)
+    provider_id = Column(BigInteger, default=0)
     name = Column(String, nullable=True)
     code = Column(String, nullable=True)
+    nibss_code = Column(String, nullable=True)
+    extra_code = Column(String, nullable=True)
     category = Column(String, nullable=True)
     icon = Column(Text, nullable=True)
     status = Column(SmallInteger, default=0)
@@ -23,8 +26,8 @@ class FinancialInstitution(Base):
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
 
-def create_financial_institution(db: Session, name: str = None, code: str = None, category: str = None, icon: str = None, status: int = 0, commit: bool=False):
-    financial_institution = FinancialInstitution(name=name, code=code, category=category, icon=icon, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_financial_institution(db: Session, provider_id: int = 0, name: str = None, code: str = None, nibss_code: str = None, extra_code: str = None, category: str = None, icon: str = None, status: int = 0, commit: bool=False):
+    financial_institution = FinancialInstitution(provider_id=provider_id, name=name, code=code, nibss_code=nibss_code, extra_code=extra_code, category=category, icon=icon, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(financial_institution)
     if commit == False:
         db.flush()

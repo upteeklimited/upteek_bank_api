@@ -14,8 +14,10 @@ class Profile(Base):
      
     id = Column(BigInteger, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'))
+    provider_id = Column(BigInteger, default=0)
     compliance_provider_id = Column(BigInteger, default=0)
     compliance_external_reference = Column(String, nullable=True)
+    external_reference = Column(String, nullable=True)
     first_name = Column(String, nullable=True)
     other_name = Column(String, nullable=True)
     last_name = Column(String, nullable=True)
@@ -31,9 +33,19 @@ class Profile(Base):
     id_document_value = Column(String, nullable=True)
     selfie = Column(Text, nullable=True)
     bvn = Column(String, nullable=True)
+    bvn_first_name = Column(String, nullable=True)
+    bvn_other_name = Column(String, nullable=True)
+    bvn_last_name = Column(String, nullable=True)
+    bvn_phone_number = Column(String, nullable=True)
+    bvn_email = Column(String, nullable=True)
     bvn_status = Column(SmallInteger, nullable=True)
     bvn_meta_data = Column(Text, nullable=True)
     nin = Column(String, nullable=True)
+    nin_first_name = Column(String, nullable=True)
+    nin_other_name = Column(String, nullable=True)
+    nin_last_name = Column(String, nullable=True)
+    nin_phone_number = Column(String, nullable=True)
+    nin_email = Column(String, nullable=True)
     nin_status = Column(SmallInteger, nullable=True)
     nin_meta_data = Column(Text, nullable=True)
     kyc_level = Column(Integer, nullable=True)
@@ -61,8 +73,8 @@ class Profile(Base):
     user = relationship('User', back_populates='profile')
 
 
-def create_profile(db: Session, user_id: int = 0, compliance_provider_id: int = 0, compliance_external_reference: str = None, first_name: str = None, other_name: str = None, last_name: str = None, mothers_maiden_name: str = None, date_of_birth: str = None, gender: str = None, bio: str = None, marital_status: str = None, avatar: str = None, id_document_file: str = None, id_document_file_back: str = None, id_document_type: str = None, id_document_value: str = None, selfie: str = None, bvn: str = None, bvn_status: int = 0, bvn_meta_data: str = None, nin: str = None, nin_status: int = 0, nin_meta_data: str = None, kyc_level: int = 0, compliance_request_data: str = None, compliance_response_data: str = None, compliance_status: int = 0, level_one_approved_by: int = 0, level_one_rejected_by: int = 0, level_one_approved_at: str = None, level_one_rejected_at: str = None, level_two_approved_by: int = 0, level_two_rejected_by: int = 0, level_two_approved_at: str = None, level_two_rejected_at: str = None, level_three_approved_by: int = 0, level_three_rejected_by: int = 0, level_three_approved_at: str = None, level_three_rejected_at: str = None, meta_data: str = None, status: int = 0, commit: bool=False):
-    profile = Profile(user_id=user_id, compliance_provider_id=compliance_provider_id, compliance_external_reference=compliance_external_reference, first_name=first_name, other_name=other_name, last_name=last_name, mothers_maiden_name=mothers_maiden_name, date_of_birth=date_of_birth, gender=gender, bio=bio, marital_status=marital_status, avatar=avatar, id_document_file=id_document_file, id_document_file_back=id_document_file_back, id_document_type=id_document_type, id_document_value=id_document_value, selfie=selfie, bvn=bvn, bvn_status=bvn_status, bvn_meta_data=bvn_meta_data, nin=nin, nin_status=nin_status, nin_meta_data=nin_meta_data, kyc_level=kyc_level, compliance_request_data=compliance_request_data, compliance_response_data=compliance_response_data, compliance_status=compliance_status, level_one_approved_by=level_one_approved_by, level_one_rejected_by=level_one_rejected_by, level_one_approved_at=level_one_approved_at, level_one_rejected_at=level_one_rejected_at, level_two_approved_by=level_two_approved_by, level_two_rejected_by=level_two_rejected_by, level_two_approved_at=level_two_approved_at, level_two_rejected_at=level_two_rejected_at, level_three_approved_by=level_three_approved_by, level_three_rejected_by=level_three_rejected_by, level_three_approved_at=level_three_approved_at, level_three_rejected_at=level_three_rejected_at, meta_data=meta_data, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_profile(db: Session, user_id: int = 0, provider_id: int = 0, compliance_provider_id: int = 0, compliance_external_reference: str = None, external_reference: str = None, first_name: str = None, other_name: str = None, last_name: str = None, mothers_maiden_name: str = None, date_of_birth: str = None, gender: str = None, bio: str = None, marital_status: str = None, avatar: str = None, id_document_file: str = None, id_document_file_back: str = None, id_document_type: str = None, id_document_value: str = None, selfie: str = None, bvn: str = None, bvn_first_name: str = None, bvn_other_name: str = None, bvn_last_name: str = None, bvn_phone_number: str = None, bvn_email: str = None, bvn_status: int = 0, bvn_meta_data: str = None, nin: str = None, nin_first_name: str = None, nin_other_name: str = None, nin_last_name: str = None, nin_phone_number: str = None, nin_email: str = None, nin_status: int = 0, nin_meta_data: str = None, kyc_level: int = 0, compliance_request_data: str = None, compliance_response_data: str = None, compliance_status: int = 0, level_one_approved_by: int = 0, level_one_rejected_by: int = 0, level_one_approved_at: str = None, level_one_rejected_at: str = None, level_two_approved_by: int = 0, level_two_rejected_by: int = 0, level_two_approved_at: str = None, level_two_rejected_at: str = None, level_three_approved_by: int = 0, level_three_rejected_by: int = 0, level_three_approved_at: str = None, level_three_rejected_at: str = None, meta_data: str = None, status: int = 0, commit: bool=False):
+    profile = Profile(user_id=user_id, provider_id=provider_id, compliance_provider_id=compliance_provider_id, compliance_external_reference=compliance_external_reference, external_reference=external_reference, first_name=first_name, other_name=other_name, last_name=last_name, mothers_maiden_name=mothers_maiden_name, date_of_birth=date_of_birth, gender=gender, bio=bio, marital_status=marital_status, avatar=avatar, id_document_file=id_document_file, id_document_file_back=id_document_file_back, id_document_type=id_document_type, id_document_value=id_document_value, selfie=selfie, bvn=bvn, bvn_first_name=bvn_first_name, bvn_other_name=bvn_other_name, bvn_last_name=bvn_last_name, bvn_phone_number=bvn_phone_number, bvn_email=bvn_email, bvn_status=bvn_status, bvn_meta_data=bvn_meta_data, nin=nin, nin_first_name=nin_first_name, nin_other_name=nin_other_name, nin_last_name=nin_last_name, nin_phone_number=nin_phone_number, nin_email=nin_email, nin_status=nin_status, nin_meta_data=nin_meta_data, kyc_level=kyc_level, compliance_request_data=compliance_request_data, compliance_response_data=compliance_response_data, compliance_status=compliance_status, level_one_approved_by=level_one_approved_by, level_one_rejected_by=level_one_rejected_by, level_one_approved_at=level_one_approved_at, level_one_rejected_at=level_one_rejected_at, level_two_approved_by=level_two_approved_by, level_two_rejected_by=level_two_rejected_by, level_two_approved_at=level_two_approved_at, level_two_rejected_at=level_two_rejected_at, level_three_approved_by=level_three_approved_by, level_three_rejected_by=level_three_rejected_by, level_three_approved_at=level_three_approved_at, level_three_rejected_at=level_three_rejected_at, meta_data=meta_data, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(profile)
     if commit == False:
         db.flush()

@@ -14,6 +14,7 @@ class Bill(Base):
      
     id = Column(BigInteger, primary_key=True, index=True)
     country_id = Column(BigInteger, default=0)
+    currency_id = Column(BigInteger, default=0)
     category_id = Column(BigInteger, default=0)
     service_id = Column(BigInteger, default=0)
     provider_id = Column(BigInteger, default=0)
@@ -37,8 +38,8 @@ class Bill(Base):
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
 
-def create_bill(db: Session, country_id: int = 0, category_id: int = 0, service_id: int = 0, provider_id: int = 0, operator_id: int = 0, name: str = None, description: str = None, short_name: str = None, label: str = None, code: str = None, amount: float = 0, minimum_amount: float = 0, maximum_amount: float = 0, fee: float = 0, commission: float = 0, is_airtime: int = 0, is_data: int = 0, is_flat: int = 0, status: int = 0, commit: bool=False):
-    bill = Bill(country_id=country_id, category_id=category_id, service_id=service_id, provider_id=provider_id, operator_id=operator_id, name=name, description=description, short_name=short_name, label=label, code=code, amount=amount, minimum_amount=minimum_amount, maximum_amount=maximum_amount, fee=fee, commission=commission, is_airtime=is_airtime, is_data=is_data, is_flat=is_flat, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_bill(db: Session, country_id: int = 0, currency_id: int = 0, category_id: int = 0, service_id: int = 0, provider_id: int = 0, operator_id: int = 0, name: str = None, description: str = None, short_name: str = None, label: str = None, code: str = None, amount: float = 0, minimum_amount: float = 0, maximum_amount: float = 0, fee: float = 0, commission: float = 0, is_airtime: int = 0, is_data: int = 0, is_flat: int = 0, status: int = 0, commit: bool=False):
+    bill = Bill(country_id=country_id, currency_id=currency_id, category_id=category_id, service_id=service_id, provider_id=provider_id, operator_id=operator_id, name=name, description=description, short_name=short_name, label=label, code=code, amount=amount, minimum_amount=minimum_amount, maximum_amount=maximum_amount, fee=fee, commission=commission, is_airtime=is_airtime, is_data=is_data, is_flat=is_flat, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(bill)
     if commit == False:
         db.flush()

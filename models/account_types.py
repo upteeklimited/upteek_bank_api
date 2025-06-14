@@ -6,6 +6,7 @@ from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
 from sqlalchemy.orm import relationship
+from models.financial_products import FinancialProduct
 
 
 class AccountType(Base):
@@ -83,6 +84,10 @@ def get_account_types(db: Session, filters: Dict={}):
     query = db.query(AccountType)
     if 'product_id' in filters:
         query = query.filter_by(product_id = filters['product_id'])
+    if 'product_type' in filters:
+        query = query.join(FinancialProduct).filter(FinancialProduct.product_type == filters['product_type'])
+    if 'product_types' in filters:
+        query = query.join(FinancialProduct).filter(FinancialProduct.product_type.in_(filters['product_types']))
     if 'name' in filters:
         query = query.filter(AccountType.name.like("%" + filters['name'] + "%"))
     if 'account_code' in filters:

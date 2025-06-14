@@ -147,6 +147,8 @@ def get_transactions(db: Session, filters: Dict={}):
         query = query.filter_by(bill_id = filters['bill_id'])
     if 'beneficiary_id' in filters:
         query = query.filter_by(beneficiary_id = filters['beneficiary_id'])
+    if 'action' in filters:
+        query = query.filter_by(action = filters['action'])
     if 'reference' in filters:
         query = query.filter(Transaction.reference.like('%' + filters['reference'] + '%'))
     if 'external_reference' in filters:

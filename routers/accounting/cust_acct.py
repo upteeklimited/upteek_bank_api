@@ -12,11 +12,14 @@ router = APIRouter(
 )
 
 @router.get("/types", response_model=Page[AccountTypeModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def types_get_all(request: Request, db: Session = Depends(get_db), product_id: int = 0, name: str = None, account_code: str = None):
+async def types_get_all(request: Request, db: Session = Depends(get_db), product_id: int = 0, product_type: int = 0, name: str = None, account_code: str = None):
     filters = {}
     if product_id is not None:
         if  product_id > 0:
             filters['product_id'] = product_id
+    if product_type is not None:
+        if  product_type > 0:
+            filters['product_type'] = product_type
     if name is not None:
         filters['name'] = name
     if account_code is not None:
@@ -97,6 +100,6 @@ async def virtual_get_all(request: Request, db: Session = Depends(get_db), user_
             filters['account_id'] = account_id
     return retrieve_virtual_accounts(db=db, filters=filters)
 
-@router.get("/virtual/get_single/{virtual_account_id}", response_model=AccountResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
+@router.get("/virtual/get_single/{virtual_account_id}", response_model=VirtualAccountResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
 async def get_single(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), virtual_account_id: int = 0):
     return retrive_single_virtual_account(db=db, virtual_account_id=virtual_account_id)

@@ -16,6 +16,8 @@ class VirtualAccount(Base):
     user_id = Column(BigInteger, ForeignKey('users.id'))
     account_id = Column(BigInteger, ForeignKey('accounts.id'))
     financial_institution_id = Column(BigInteger, ForeignKey('financial_institutions.id'))
+    provider_id = Column(BigInteger, default=0)
+    external_reference = Column(String, nullable=True)
     account_name = Column(String, nullable=True)
     account_number = Column(String, nullable=True)
     bank_name = Column(String, nullable=True)
@@ -29,8 +31,8 @@ class VirtualAccount(Base):
     account = relationship('Account', back_populates='virtual_accounts', foreign_keys=[account_id])
     financial_institution = relationship('FinancialInstitution')
 
-def create_virtual_account(db: Session, user_id: int = 0, account_id: int = 0, financial_institution_id: int = 0, account_name: str = None, account_number: str = None, bank_name: str = None, status: int = 0, is_primary: int = 0, is_generated: int = 0, commit: bool=False):
-    va = VirtualAccount(user_id=user_id, account_id=account_id, financial_institution_id=financial_institution_id, account_name=account_name, account_number=account_number, bank_name=bank_name, is_primary=is_primary, is_generated=is_generated, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_virtual_account(db: Session, user_id: int = 0, account_id: int = 0, financial_institution_id: int = 0, provider_id: int = 0, external_reference: str = None, account_name: str = None, account_number: str = None, bank_name: str = None, status: int = 0, is_primary: int = 0, is_generated: int = 0, commit: bool=False):
+    va = VirtualAccount(user_id=user_id, account_id=account_id, financial_institution_id=financial_institution_id, provider_id=provider_id, external_reference=external_reference, account_name=account_name, account_number=account_number, bank_name=bank_name, is_primary=is_primary, is_generated=is_generated, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(va)
     if commit == False:
         db.flush()
