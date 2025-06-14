@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Any
 from pydantic import BaseModel, Field
 from datetime import datetime
 from schemas.user import UserInfoModel, MerchantModel
@@ -117,6 +117,8 @@ class FinancialProductModel(BaseModel):
     maximum_amount: Optional[float] = None
     liquidation_penalty: Optional[float] = None
     tenure: Optional[int] = None
+    interest_tenure_type: Optional[int] = None
+    interest_tenure_data: Optional[Any] = None
     guarantor_requirement: Optional[int] = None
     amount_to_require_guarantor: Optional[float] = None
     status: Optional[int] = 0
@@ -142,6 +144,8 @@ class CreateFinancialProductModel(BaseModel):
     maximum_amount: Optional[float] = None
     liquidation_penalty: Optional[float] = None
     tenure: Optional[int] = None
+    interest_tenure_type: Optional[int] = None
+    interest_tenure_data: Optional[Any] = None
     guarantor_requirement: Optional[int] = None
     amount_to_require_guarantor: Optional[float] = None
 
@@ -163,6 +167,8 @@ class UpdateFinancialProductModel(BaseModel):
     maximum_amount: Optional[float] = None
     liquidation_penalty: Optional[float] = None
     tenure: Optional[int] = None
+    interest_tenure_type: Optional[int] = None
+    interest_tenure_data: Optional[Any] = None
     guarantor_requirement: Optional[int] = None
     amount_to_require_guarantor: Optional[float] = None
     status: Optional[int] = None

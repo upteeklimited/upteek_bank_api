@@ -4,6 +4,7 @@ from database.model import create_financial_product, FinancialProduct, create_ge
 from modules.utils.acct import generate_internal_gl_number, generate_account_type_code
 from fastapi_pagination.ext.sqlalchemy import paginate
 from modules.utils.tools import process_schema_dictionary
+import json
 
 
 def create_product_gls(db: Session, product: FinancialProduct, created_by: int=0, authorized_by: int=0):
@@ -160,7 +161,7 @@ def create_product_gls(db: Session, product: FinancialProduct, created_by: int=0
         'data': data
     }
 
-def create_new_financial_product(db: Session, name: str=None, description: str=None, product_type: int=0, user_type: int=0, individual_compliance_type: int=0, merchant_compliance_type: int=0, interest_rate: float=0, overdrawn_interest_rate: float=0, charge_if_overdrawn: float=0, charges: float=0, cot_rate: float=0, minimum_amount: float=0, maximum_amount: float=0, liquidation_penalty: float=0, tenure: int=0, guarantor_requirement: int=0, amount_to_require_guarantor: float=0, created_by: int=0, authorized_by: int=0):
+def create_new_financial_product(db: Session, name: str=None, description: str=None, product_type: int=0, user_type: int=0, individual_compliance_type: int=0, merchant_compliance_type: int=0, interest_rate: float=0, overdrawn_interest_rate: float=0, charge_if_overdrawn: float=0, charges: float=0, cot_rate: float=0, minimum_amount: float=0, maximum_amount: float=0, liquidation_penalty: float=0, tenure: int=0, interest_tenure_type: int = 0, interest_tenure_data: str = None, guarantor_requirement: int=0, amount_to_require_guarantor: float=0, created_by: int=0, authorized_by: int=0):
     country_id = 0
     currency_id = 0
     country = get_single_country_by_code(db=db, code="NG")
@@ -169,7 +170,7 @@ def create_new_financial_product(db: Session, name: str=None, description: str=N
     currency = get_single_currency_by_code(db=db, code="NGN")
     if currency is not None:
         currency_id = currency.id
-    product = create_financial_product(db=db, name=name, description=description, country_id=country_id, currency_id=currency_id, product_type=product_type, user_type=user_type, individual_compliance_type=individual_compliance_type, merchant_compliance_type=merchant_compliance_type, interest_rate=interest_rate, overdrawn_interest_rate=overdrawn_interest_rate, charge_if_overdrawn=charge_if_overdrawn, charges=charges, cot_rate=cot_rate, minimum_amount=minimum_amount, maximum_amount=maximum_amount, liquidation_penalty=liquidation_penalty, tenure=tenure, guarantor_requirement=guarantor_requirement, amount_to_require_guarantor=amount_to_require_guarantor, status=1, created_by=created_by, authorized_by=authorized_by)
+    product = create_financial_product(db=db, name=name, description=description, country_id=country_id, currency_id=currency_id, product_type=product_type, user_type=user_type, individual_compliance_type=individual_compliance_type, merchant_compliance_type=merchant_compliance_type, interest_rate=interest_rate, overdrawn_interest_rate=overdrawn_interest_rate, charge_if_overdrawn=charge_if_overdrawn, charges=charges, cot_rate=cot_rate, minimum_amount=minimum_amount, maximum_amount=maximum_amount, liquidation_penalty=liquidation_penalty, tenure=tenure, interest_tenure_type=interest_tenure_type, interest_tenure_data=json.dumps(interest_tenure_data), guarantor_requirement=guarantor_requirement, amount_to_require_guarantor=amount_to_require_guarantor, status=1, created_by=created_by, authorized_by=authorized_by)
     resp = create_product_gls(db=db, product=product, created_by=created_by, authorized_by=authorized_by)
     resp_data = resp['data']
     values = {
@@ -207,6 +208,9 @@ def update_existing_financial_product(db: Session, product_id: int=0, values: Di
         type_vals['description'] = values['description']
     if 'status' in values:
         type_vals['status'] = values['status']
+    if 'interest_tenure_data' in values:
+        if values['interest_tenure_data'] is not None:
+            values['interest_tenure_data'] = json.dumps(values['interest_tenure_data'])
     update_financial_product(db=db, id=product_id, values=values)
     if type_vals != {}:
         account_type = get_single_account_type_by_product_id(db=db, product_id=product_id)
