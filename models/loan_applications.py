@@ -110,6 +110,8 @@ def get_loan_applications(db: Session, filters: Dict={}):
         query = query.filter_by(account_id = filters['account_id'])
     if 'card_id' in filters:
         query = query.filter_by(card_id = filters['card_id'])
+    if 'approval_level' in filters:
+        query = query.filter_by(approval_level = filters['approval_level'])
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(LoanApplication.created_at))

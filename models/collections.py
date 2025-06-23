@@ -30,8 +30,8 @@ class Collection(Base):
 
     loan = relationship('Loan', back_populates='collections', uselist=False)
 
-def create_collection(db: Session, loan_id: int = 0, amount: float = 0, total_principal: float = 0, total_interest: float = 0, bal_principal: float = 0, bal_interest: float = 0, retrial_num: int = 0, status: int = 0, retrial_status: str = None, collected_at: str = None, deleted_at: str = None, commit: bool=False):
-    collection = Collection(loan_id=loan_id, amount=amount, total_principal=total_principal, total_interest=total_interest, bal_principal=bal_principal, bal_interest=bal_interest, retrial_num=retrial_num, status=status, retrial_status=retrial_status, collected_at=collected_at, deleted_at=deleted_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_collection(db: Session, loan_id: int = 0, amount: float = 0, total_principal: float = 0, total_interest: float = 0, bal_principal: float = 0, bal_interest: float = 0, retrial_num: int = 0, status: int = 0, retrial_status: str = None, collected_at: str = None, commit: bool=False):
+    collection = Collection(loan_id=loan_id, amount=amount, total_principal=total_principal, total_interest=total_interest, bal_principal=bal_principal, bal_interest=bal_interest, retrial_num=retrial_num, status=status, retrial_status=retrial_status, collected_at=collected_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(collection)
     if commit == False:
         db.flush()
@@ -71,6 +71,9 @@ def force_delete_collection(db: Session, id: int=0, commit: bool=False):
 
 def get_single_collection_by_id(db: Session, id: int=0):
     return db.query(Collection).filter_by(id = id).first()
+
+def get_collections_by_loan_id(db: Session, loan_id: int=0):
+    return db.query(Collection).filter_by(loan_id = loan_id).order_by(desc(Collection.created_at)).all()
 
 def get_collections(db: Session, filters: Dict={}):
     query = db.query(Collection)

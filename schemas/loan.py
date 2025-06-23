@@ -1,7 +1,7 @@
 from typing import Optional, Any, List
 from pydantic import BaseModel
 from datetime import datetime
-from schemas.acct import FinancialProductMiniModel
+from schemas.acct import FinancialProductMiniModel, AccountInfoModel
 
 class CreateLoanApplicationModel(BaseModel):
     product_id: int
@@ -91,6 +91,8 @@ class LoanModel(BaseModel):
     created_at: Optional[datetime] = None
     application: Optional[LoanApplicationMiniModel] = None
     collections: Optional[List[CollectionModel]] = None
+    account: Optional[AccountInfoModel] = None
+    loan_account: Optional[AccountInfoModel] = None
 
     class Config:
         orm_mode = True
@@ -189,6 +191,19 @@ class PayLoanModel(BaseModel):
     is_card: Optional[bool] = False
     card_transaction_reference: Optional[str] = None
     provider_code: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+class LoanApplicationApprovalModel(BaseModel):
+    loan_application_id: int
+
+    class Config:
+        orm_mode = True
+
+class LoanApplicationDeclineModel(BaseModel):
+    loan_application_id: int
+    decline_reason: Optional[str] = None
 
     class Config:
         orm_mode = True

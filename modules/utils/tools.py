@@ -271,3 +271,8 @@ def format_date_for_smile_id(date_str: str=None):
     parsed_date = dateparser.parse(date_str)
     formatted_date = parsed_date.strftime("%Y-%m-%d") if parsed_date else None
     return formatted_date
+
+def format_date_laravel_datetime(date_str: str=None):
+    parsed_date = dateparser.parse(date_str)
+    formatted_date = parsed_date.strftime("%Y-%m-%d %H:%M:%S") if parsed_date else None
+    return formatted_date

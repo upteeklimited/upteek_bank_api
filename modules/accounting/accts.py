@@ -1,6 +1,7 @@
 from typing import Dict
 from sqlalchemy.orm import Session
-from database.model import get_account_types, get_single_account_type_by_id, get_single_account_type_by_account_code, get_accounts, get_single_account_by_id, get_single_account_by_account_number, get_virtual_accounts, get_single_virtual_account_by_id
+from database.model import get_account_types, get_single_account_type_by_id, get_single_account_type_by_account_code, get_accounts, get_single_account_by_id, get_single_account_by_account_number, get_virtual_accounts, get_single_virtual_account_by_id, get_single_financial_product_by_id, get_last_account, create_account
+from modules.utils.acct import generate_internal_account_number
 from fastapi_pagination.ext.sqlalchemy import paginate
 
 def retrieve_account_types(db: Session, filters: Dict={}):
@@ -89,3 +90,33 @@ def retrive_single_virtual_account(db: Session, virtual_account_id: int=0):
             'message': 'Success',
             'data': va,
         }
+
+def create_new_customer_account(db: Session, user_id: int=0, merchant_id: int=0, account_type_id: int=0, account_name: str=None):
+    account_type = get_single_account_type_by_id(db=db, id=account_type_id)
+    if account_type is None:
+        return {
+            'status': False,
+            'message': 'Account Type not found',
+            'data': None,
+        }
+    else:
+        account_type_id = account_type.id
+        financial_product = get_single_financial_product_by_id(db=db, id=account_type.product_id)
+        if financial_product is None:
+            return {
+                'status': False,
+                'message': 'Financial Product not found',
+                'data': None
+            }
+        else:
+            last_account_id = 0
+            last_account = get_last_account(db=db)
+            if last_account is not None:
+                last_account_id = last_account.id
+            account_number = generate_internal_account_number(product_type=financial_product.product_type, last_id=last_account_id)
+            account = create_account(db=db, user_id=user_id, merchant_id=merchant_id, account_type_id=account_type_id, account_name=account_name, account_number=account_number, status=1)
+            return {
+                'status': True,
+                'message': 'Account Created',
+                'data': get_single_account_by_id(db=db, id=account.id)
+            }

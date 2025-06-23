@@ -85,6 +85,9 @@ def force_delete_account(db: Session, id: int=0, commit: bool=False):
 def get_single_account_by_id(db: Session, id: int=0):
     return db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user).joinedload(User.profile), joinedload(Account.merchant)).filter_by(id = id).first()
 
+def get_just_single_account_by_id(db: Session, id: int=0):
+    return db.query(Account).filter_by(id = id).first()
+
 def get_single_account_by_account_number(db: Session, account_number: str = None):
     return db.query(Account).options(joinedload(Account.account_type), joinedload(Account.virtual_accounts), joinedload(Account.user).joinedload(User.profile), joinedload(Account.merchant)).filter(or_(Account.account_number == account_number, Account.nuban == account_number)).first()
 
