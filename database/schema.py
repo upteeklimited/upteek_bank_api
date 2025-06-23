@@ -1,8 +1,10 @@
 from schemas.acct import GLTypeModel, CreateGLTypeModel, UpdateGLTypeModel, GLTypeResponseModel, GLModel, CreateGLModel, UpdateGLModel, GLResponseModel, FinancialProductModel, CreateFinancialProductModel, UpdateFinancialProductModel, FinancialProductResponseModel, AccountTypeModel, AccountTypeResponseModel, VirtualAccountModel, AccountModel, AccountResponseModel, VirtualAccountResponseModel
 from schemas.auth import RegisterRequest, LoginEmailRequest, SendEmailTokenRequest, FinalisePasswordLessRequest, VerifyEmailTokenRequest, CheckPhoneNumberRequest, CheckUsernameRequest, CheckEmailRequest, SSORequest
 from schemas.dash import DashboardDataResponseModel, DashboardGraphDataResponseModel
+from schemas.dep import DepositModel, DepositResponseModel, CreateDepositModel
 from schemas.fil import MediumModel, UpdateMediumRequest, MediaResponse, MediaListResponse
 from schemas.inv import CreateCategoryRequest, UpdateCategoryRequest, CategoryModel, CategoryResponse, CreateGroupRequest, UpdateGroupRequest, GroupModel, GroupResponse, ProductModel, ProductFieldModel, UpdateMultiProductRequest, UpdateDiverseProductRequest, ProductResponseModel, MiniProductResponseModel
+from schemas.loan import LoanApplicationModel, LoanApplicationResponseModel, LoanResponseModel, LoanModel
 from schemas.misc import CountryModel, CountryResponseModel, CurrencyModel, CurrencyResponseModel, StateModel, StateResponseModel, CityModel, CityResponseModel, LGAModel, LGAResponseModel, CreateMerchantIndustryModel, UpdateMerchantIndustryModel, MerchantIndustryModel, MerchantIndustryResponseModel, CreateMerchantCategoryModel, UpdateMerchantCategoryModel, MerchantCategoryModel, MerchantCategoryResponseModel
 from schemas.ord import OrderedProductModel, CreateOrderRequest, OrderModel, OrderMainModel, NewOrderResponse, OrderResponse
 from schemas.pro import UpdateBasicProfileRequestModel, parse_update_basic_profile_payload, UpdatePasswordRequestModel, UpdateSettingsRequestModel, UpdateAddressRequestModel, SmileIDPayloadRequestModel, SmileIDGenerateWebTokenRequestModel, SmileIDWebTokenResponse, SmileIDComplainceFinaliseResponse, SmileIDMerchantComplainceFinaliseResponse

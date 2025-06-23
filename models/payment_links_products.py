@@ -15,13 +15,17 @@ class PaymentLinkProduct(Base):
     id = Column(BigInteger, primary_key=True, index=True)
     payment_link_id = Column(BigInteger, default=0)
     product_id = Column(BigInteger, default=0)
+    quantity = Column(Integer, default=0)
+    extra_quantity = Column(Integer, default=0)
+    amount = Column(Float, default=0)
+    meta_data = Column(Text, nullable=True)
     status = Column(SmallInteger, default=0)
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_payment_link_product(db: Session, payment_link_id: int = 0, product_id: int = 0, status: int = 0, commit: bool=False):
-    pay_link_prod = PaymentLinkProduct(payment_link_id=payment_link_id, product_id=product_id, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_payment_link_product(db: Session, payment_link_id: int = 0, product_id: int = 0, quantity: int = 0, extra_quantity: int = 0, amount: float = 0, meta_data: str = None, status: int = 0, commit: bool=False):
+    pay_link_prod = PaymentLinkProduct(payment_link_id=payment_link_id, product_id=product_id, quantity=quantity, extra_quantity=extra_quantity, amount=amount, meta_data=meta_data, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(pay_link_prod)
     if commit == False:
         db.flush()

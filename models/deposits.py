@@ -1,6 +1,6 @@
 from typing import Dict
 from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc, func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 # from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
@@ -13,10 +13,10 @@ class Deposit(Base):
     __tablename__ = "deposits"
      
     id = Column(BigInteger, primary_key=True, index=True)
-    user_id = Column(BigInteger, default=0)
-    merchant_id = Column(BigInteger, default=0)
-    gl_id = Column(BigInteger, default=0)
-    account_id = Column(BigInteger, default=0)
+    user_id = Column(BigInteger, ForeignKey("users.id"))
+    merchant_id = Column(BigInteger, ForeignKey("merchants.id"))
+    gl_id = Column(BigInteger, ForeignKey("general_ledger_accounts.id"))
+    account_id = Column(BigInteger, ForeignKey("accounts.id"))
     amount = Column(Float, default=0)
     rate = Column(Float, default=0)
     tenure = Column(Integer, default=0)
@@ -42,6 +42,8 @@ class Deposit(Base):
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
+
+    account = relationship('Account', back_populates='deposit')
 
 def create_deposit(db: Session, user_id: int = 0, merchant_id: int = 0, gl_id: int = 0, account_id: int = 0, amount: float = 0, rate: float = 0, tenure: int = 0, yield_amount: float = 0, current_value: float = 0, withholding_tax: float = 0, vat: float = 0, receiving_account_principal_id: int = 0, receiving_account_interest_id: int = 0, rollover_principal: float = 0, rollover_interest: float = 0, rollover_at_maturity: int = 0, liquidation_charge: float = 0, rollover_count: int = 0, status: int = 0, meta_data: str = None, created_by: int = 0, authorized_by: int = 0, matured_at: str = None, liquidated_at: str = None, authorized_at: str = None, rollover_at: str = None, deleted_at: str = None, commit: bool=False):
     deposit = Deposit(user_id=user_id, merchant_id=merchant_id, gl_id=gl_id, account_id=account_id, amount=amount, rate=rate, tenure=tenure, yield_amount=yield_amount, current_value=current_value, withholding_tax=withholding_tax, vat=vat, receiving_account_principal_id=receiving_account_principal_id, receiving_account_interest_id=receiving_account_interest_id, rollover_principal=rollover_principal, rollover_interest=rollover_interest, rollover_at_maturity=rollover_at_maturity, liquidation_charge=liquidation_charge, rollover_count=rollover_count, status=status, meta_data=meta_data, created_by=created_by, authorized_by=authorized_by, matured_at=matured_at, liquidated_at=liquidated_at, authorized_at=authorized_at, rollover_at=rollover_at, deleted_at=deleted_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
@@ -83,10 +85,13 @@ def force_delete_deposit(db: Session, id: int=0, commit: bool=False):
     return True
 
 def get_single_deposit_by_id(db: Session, id: int=0):
+    return db.query(Deposit).options(joinedload(Deposit.account)).filter_by(id = id).first()
+
+def get_just_single_deposit_by_id(db: Session, id: int=0):
     return db.query(Deposit).filter_by(id = id).first()
 
 def get_deposits(db: Session, filters: Dict={}):
-    query = db.query(Deposit)
+    query = db.query(Deposit).options(joinedload(Deposit.account))
     if 'user_id' in filters:
         query = query.filter_by(user_id = filters['user_id'])
     if 'merchant_id' in filters:

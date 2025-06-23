@@ -19,6 +19,9 @@ from routers.accounting import cust_acct
 from routers.transaction import type
 from routers.transaction import postings
 from routers.user import main as user_main
+from routers.loan import apply as loan_applications
+from routers.loan import post as loans
+from routers.deposit import fixed as fixed_deposits
 
 # Main app section here
 app = FastAPI(title="Upteek Bank")
@@ -35,6 +38,9 @@ app.include_router(cust_acct.router)
 app.include_router(type.router)
 app.include_router(postings.router)
 app.include_router(user_main.router)
+app.include_router(loan_applications.router)
+app.include_router(loans.router)
+app.include_router(fixed_deposits.router)
 
 #Test routers
 # app.include_router(external.router)

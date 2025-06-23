@@ -18,14 +18,19 @@ class PaymentLink(Base):
     title = Column(String, nullable=True)
     description = Column(Text, nullable=True)
     reference = Column(String, nullable=True)
+    url = Column(String, nullable=True)
+    amount = Column(Float, default=0)
+    items_for_sale = Column(Integer, default=0)
+    quantity = Column(Integer, default=0)
     number_of_uses = Column(Integer, default=0)
     status = Column(SmallInteger, default=0)
+    expired_at = Column(TIMESTAMP(timezone=True), nullable=True)
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_payment_link(db: Session, merchant_id: int = 0, product_id: int = 0, title: str = None, description: str = None, reference: str = None, number_of_uses: int = 0, status: int = 0, commit: bool=False):
-    pay_link = PaymentLink(merchant_id=merchant_id, product_id=product_id, title=title, description=description, reference=reference, number_of_uses=number_of_uses, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_payment_link(db: Session, merchant_id: int = 0, product_id: int = 0, title: str = None, description: str = None, reference: str = None, url: str = None, amount: float = 0, items_for_sale: int = 0, quantity: int = 0, number_of_uses: int = 0, status: int = 0, expired_at: str = None, commit: bool=False):
+    pay_link = PaymentLink(merchant_id=merchant_id, product_id=product_id, title=title, description=description, reference=reference, url=url, amount=amount, items_for_sale=items_for_sale, quantity=quantity, number_of_uses=number_of_uses, status=status, expired_at=expired_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(pay_link)
     if commit == False:
         db.flush()

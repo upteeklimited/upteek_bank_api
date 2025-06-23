@@ -15,6 +15,7 @@ class InvoiceItem(Base):
      
     id = Column(BigInteger, primary_key=True, index=True)
     invoice_id = Column(BigInteger, default=0)
+    product_id = Column(BigInteger, default=0)
     description = Column(Text, nullable=True)
     amount = Column(Float, default=0)
     quantity = Column(Integer, default=0)
@@ -23,8 +24,8 @@ class InvoiceItem(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_invoice_item(db: Session, invoice_id: int = 0, description: str = None, amount: float = 0, quantity: int = 0, status: int = 0, commit: bool=False):
-    inv_item = InvoiceItem(invoice_id=invoice_id, description=description, amount=amount, quantity=quantity, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_invoice_item(db: Session, invoice_id: int = 0, product_id: int = 0, description: str = None, amount: float = 0, quantity: int = 0, status: int = 0, commit: bool=False):
+    inv_item = InvoiceItem(invoice_id=invoice_id, product_id=product_id, description=description, amount=amount, quantity=quantity, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(inv_item)
     if commit == False:
         db.flush()

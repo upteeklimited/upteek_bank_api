@@ -175,7 +175,7 @@ def create_new_financial_product(db: Session, name: str=None, description: str=N
     resp_data = resp['data']
     values = {
         'gl_id': resp_data['reporting_gl_id'],
-        'interest_expense_gl_id': resp_data['interest_payable_gl_id'],
+        'interest_expense_gl_id': resp_data['expense_gl_id'],
         'interest_income_gl_id': resp_data['income_gl_id'],
         'principal_unpaid_gl_id': resp_data['expense_gl_id'],
         'interest_unearned_gl_id': resp_data['unearned_gl_id'],

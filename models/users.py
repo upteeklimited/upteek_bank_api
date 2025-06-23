@@ -20,6 +20,7 @@ class User(Base):
     email = Column(String, nullable=True)
     phone_number = Column(String, nullable=True)
     password = Column(String, nullable=True)
+    pin = Column(String, nullable=True)
     device_token = Column(String, nullable=True)
     external_provider = Column(String, nullable=True)
     external_reference = Column(String, nullable=True)
@@ -35,8 +36,8 @@ class User(Base):
     profile = relationship('Profile', back_populates='user', uselist=False)
 
 
-def create_user(db: Session, country_id: int = 0, merchant_id: int = 0, username: str = None, email: str = None, phone_number: str = None, password: str = None, device_token: str = None, external_provider: str = None, external_reference: str = None, user_type: int = 0, role: int = 0, status: int = 0, commit: bool=False):
-    user = User(country_id=country_id, merchant_id=merchant_id, username=username, email=email, phone_number=phone_number, password=password, device_token=device_token, external_provider=external_provider, external_reference=external_reference, user_type=user_type, role=role, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_user(db: Session, country_id: int = 0, merchant_id: int = 0, username: str = None, email: str = None, phone_number: str = None, password: str = None, pin: str = None, device_token: str = None, external_provider: str = None, external_reference: str = None, user_type: int = 0, role: int = 0, status: int = 0, commit: bool=False):
+    user = User(country_id=country_id, merchant_id=merchant_id, username=username, email=email, phone_number=phone_number, password=password, pin=pin, device_token=device_token, external_provider=external_provider, external_reference=external_reference, user_type=user_type, role=role, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(user)
     if commit == False:
         db.flush()

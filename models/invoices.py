@@ -16,6 +16,15 @@ class Invoice(Base):
     id = Column(BigInteger, primary_key=True, index=True)
     currency_id = Column(BigInteger, default=0)
     invoice_request_id = Column(BigInteger, default=0)
+    user_id = Column(BigInteger, default=0)
+    merchant_id = Column(BigInteger, default=0)
+    product_id = Column(BigInteger, default=0)
+    customer_email = Column(String, nullable=True)
+    customer_phone_number = Column(String, nullable=True)
+    customer_full_name = Column(String, nullable=True)
+    customer_address = Column(String, nullable=True)
+    reference = Column(String, nullable=True)
+    url = Column(String, nullable=True)
     title = Column(String, nullable=True)
     description = Column(Text, nullable=True)
     notes = Column(Text, nullable=True)
@@ -34,8 +43,8 @@ class Invoice(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_invoice(db: Session, currency_id: int = 0, invoice_request_id: int = 0, title: str = None, description: str = None, notes: str = None, due_date: str = None, tax: float = 0, vat: float = 0, wht: float = 0, discount_amount: float = 0, shipping_fee: float = 0, total_amount: float = 0, payment_date: str = None, is_paid: int = 0, status: int = 0, commit: bool=False):
-    inv = Invoice(currency_id=currency_id, invoice_request_id=invoice_request_id, title=title, description=description, notes=notes, due_date=due_date, tax=tax, vat=vat, wht=wht, discount_amount=discount_amount, shipping_fee=shipping_fee, total_amount=total_amount, payment_date=payment_date, is_paid=is_paid, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_invoice(db: Session, currency_id: int = 0, invoice_request_id: int = 0, user_id: int = 0, merchant_id: int = 0, product_id: int = 0, customer_email: str = None, customer_phone_number: str = None, customer_full_name: str = None, customer_address: str = None, reference: str = None, url: str = None, title: str = None, description: str = None, notes: str = None, due_date: str = None, tax: float = 0, vat: float = 0, wht: float = 0, discount_amount: float = 0, shipping_fee: float = 0, total_amount: float = 0, payment_date: str = None, is_paid: int = 0, status: int = 0, commit: bool=False):
+    inv = Invoice(currency_id=currency_id, invoice_request_id=invoice_request_id, user_id=user_id, merchant_id=merchant_id, product_id=product_id, customer_email=customer_email, customer_phone_number=customer_phone_number, customer_full_name=customer_full_name, customer_address=customer_address, reference=reference, url=url, title=title, description=description, notes=notes, due_date=due_date, tax=tax, vat=vat, wht=wht, discount_amount=discount_amount, shipping_fee=shipping_fee, total_amount=total_amount, payment_date=payment_date, is_paid=is_paid, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(inv)
     if commit == False:
         db.flush()

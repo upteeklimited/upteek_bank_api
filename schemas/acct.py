@@ -1,5 +1,5 @@
 from typing import Optional, List, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator, ValidationError
 from datetime import datetime
 from schemas.user import UserInfoModel, MerchantModel
 
@@ -124,6 +124,13 @@ class FinancialProductModel(BaseModel):
     status: Optional[int] = 0
     created_at: Optional[datetime] = None
     account_type: Optional[AccountTypeModel] = None
+
+    @model_validator(mode='after')
+    def check_min_max(self):
+        if self.minimum_amount is not None and self.maximum_amount is not None:
+            if self.minimum_amount > self.maximum_amount:
+                raise ValueError('minimum_amount cannot be greater than maximum_amount')
+        return self
 
     class Config:
         orm_mode = True

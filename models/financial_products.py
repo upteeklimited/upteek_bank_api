@@ -54,6 +54,7 @@ class FinancialProduct(Base):
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
     account_type = relationship('AccountType', back_populates='financial_product', uselist=False)
+    loan_applications = relationship('LoanApplication', back_populates='financial_product', foreign_keys='LoanApplication.product_id', uselist=True)
 
 def create_financial_product(db: Session, country_id: int = 0, currency_id: int = 0, gl_id: int = 0, interest_expense_gl_id: int = 0, interest_income_gl_id: int = 0, principal_unpaid_gl_id: int = 0, interest_unearned_gl_id: int = 0, fixed_charge_gl_id: int = 0, insurance_holding_gl_id: int = 0, overdrawn_interest_gl_id: int = 0, liability_overdraft_gl_id: int = 0, interest_receivable_gl_id: int = 0, interest_payable_gl_id: int = 0, name: str = None, description: str = None, product_type: int = 0, user_type: int = 0, individual_compliance_type: int = 0, merchant_compliance_type: int = 0, interest_rate: float = 0, overdrawn_interest_rate: float = 0, charge_if_overdrawn: float = 0, charges: float = 0, cot_rate: float = 0, minimum_amount: float = 0, maximum_amount: float = 0, liquidation_penalty: float = 0, tenure: int = 0, interest_tenure_type: int = 0, interest_tenure_data: str = None, guarantor_requirement: int = 0, amount_to_require_guarantor: float = 0, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
     financial_product = FinancialProduct(country_id=country_id, currency_id=currency_id, gl_id=gl_id, interest_expense_gl_id=interest_expense_gl_id, interest_income_gl_id=interest_income_gl_id, principal_unpaid_gl_id=principal_unpaid_gl_id, interest_unearned_gl_id=interest_unearned_gl_id, fixed_charge_gl_id=fixed_charge_gl_id, insurance_holding_gl_id=insurance_holding_gl_id, overdrawn_interest_gl_id=overdrawn_interest_gl_id, liability_overdraft_gl_id=liability_overdraft_gl_id, interest_receivable_gl_id=interest_receivable_gl_id, interest_payable_gl_id=interest_payable_gl_id, name=name, description=description, product_type=product_type, user_type=user_type, individual_compliance_type=individual_compliance_type, merchant_compliance_type=merchant_compliance_type, interest_rate=interest_rate, overdrawn_interest_rate=overdrawn_interest_rate, charge_if_overdrawn=charge_if_overdrawn, charges=charges, cot_rate=cot_rate, minimum_amount=minimum_amount, maximum_amount=maximum_amount, liquidation_penalty=liquidation_penalty, tenure=tenure, interest_tenure_type=interest_tenure_type, interest_tenure_data=interest_tenure_data, guarantor_requirement=guarantor_requirement, amount_to_require_guarantor=amount_to_require_guarantor, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
@@ -96,6 +97,9 @@ def force_delete_financial_product(db: Session, id: int=0, commit: bool=False):
 
 def get_single_financial_product_by_id(db: Session, id: int=0):
     return db.query(FinancialProduct).options(joinedload(FinancialProduct.account_type)).filter_by(id = id).first()
+
+def get_just_single_financial_product_by_id(db: Session, id: int=0):
+    return db.query(FinancialProduct).filter_by(id = id).first()
 
 def get_financial_products(db: Session, filters: Dict={}):
     query = db.query(FinancialProduct).options(joinedload(FinancialProduct.account_type))

@@ -18,6 +18,7 @@ class Category(Base):
     name = Column(String, nullable=True)
     description = Column(Text, nullable=True)
     slug = Column(String, nullable=True)
+    icon = Column(Text, nullable=True)
     status = Column(SmallInteger, default=0)
     created_by = Column(BigInteger, default=0)
     authorized_by = Column(BigInteger, default=0)
@@ -28,8 +29,8 @@ class Category(Base):
 
     products = relationship("Product", secondary="products_categories", back_populates="categories")
 
-def create_category(db: Session, merchant_id: int = 0, category_id: int = 0, name: str = None, description: str = None, slug: str = None, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
-    category = Category(merchant_id=merchant_id, category_id=category_id, name=name, description=description, slug=slug, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_category(db: Session, merchant_id: int = 0, category_id: int = 0, name: str = None, description: str = None, slug: str = None, icon: str = None, status: int = 0, created_by: int = 0, authorized_by: int = 0, authorized_at: str = None, commit: bool=False):
+    category = Category(merchant_id=merchant_id, category_id=category_id, name=name, description=description, slug=slug, icon=icon, status=status, created_by=created_by, authorized_by=authorized_by, authorized_at=authorized_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(category)
     if commit == False:
         db.flush()
