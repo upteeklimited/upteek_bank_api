@@ -125,12 +125,31 @@ class FinancialProductModel(BaseModel):
     created_at: Optional[datetime] = None
     account_type: Optional[AccountTypeModel] = None
 
-    @model_validator(mode='after')
-    def check_min_max(self):
-        if self.minimum_amount is not None and self.maximum_amount is not None:
-            if self.minimum_amount > self.maximum_amount:
-                raise ValueError('minimum_amount cannot be greater than maximum_amount')
-        return self
+    class Config:
+        orm_mode = True
+
+class FinancialProductMiniModel(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    product_type: int
+    user_type: int
+    individual_compliance_type: Optional[int] = None
+    merchant_compliance_type: Optional[int] = None
+    overdrawn_interest_rate: Optional[float] = None
+    charge_if_overdrawn: Optional[float] = None
+    charges: Optional[float] = None
+    cot_rate: Optional[float] = None
+    minimum_amount: Optional[float] = None
+    maximum_amount: Optional[float] = None
+    liquidation_penalty: Optional[float] = None
+    tenure: Optional[int] = None
+    interest_tenure_type: Optional[int] = None
+    interest_tenure_data: Optional[str] = None
+    guarantor_requirement: Optional[int] = None
+    amount_to_require_guarantor: Optional[float] = None
+    status: Optional[int] = 0
+    created_at: Optional[datetime] = None
 
     class Config:
         orm_mode = True
@@ -156,6 +175,13 @@ class CreateFinancialProductModel(BaseModel):
     guarantor_requirement: Optional[int] = None
     amount_to_require_guarantor: Optional[float] = None
 
+    @model_validator(mode='after')
+    def check_min_max(self):
+        if self.minimum_amount is not None and self.maximum_amount is not None:
+            if self.minimum_amount > self.maximum_amount:
+                raise ValueError('minimum_amount cannot be greater than maximum_amount')
+        return self
+
     class Config:
         orm_mode = True
 
@@ -179,6 +205,13 @@ class UpdateFinancialProductModel(BaseModel):
     guarantor_requirement: Optional[int] = None
     amount_to_require_guarantor: Optional[float] = None
     status: Optional[int] = None
+
+    @model_validator(mode='after')
+    def check_min_max(self):
+        if self.minimum_amount is not None and self.maximum_amount is not None:
+            if self.minimum_amount > self.maximum_amount:
+                raise ValueError('minimum_amount cannot be greater than maximum_amount')
+        return self
 
     class Config:
         orm_mode = True
