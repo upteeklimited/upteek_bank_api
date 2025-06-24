@@ -102,7 +102,7 @@ def get_just_single_financial_product_by_id(db: Session, id: int=0):
     return db.query(FinancialProduct).filter_by(id = id).first()
 
 def get_financial_products(db: Session, filters: Dict={}):
-    query = db.query(FinancialProduct).options(joinedload(FinancialProduct.account_type))
+    query = db.query(FinancialProduct).options(joinedload(FinancialProduct.account_type)).filter(FinancialProduct.deleted_at == None)
     if 'country_id' in filters:
         query = query.filter_by(country_id = filters['country_id'])
     if 'currency_id' in filters:
