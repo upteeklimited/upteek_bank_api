@@ -2,6 +2,7 @@ from typing import Optional, Any, List
 from pydantic import BaseModel
 from datetime import datetime
 from schemas.acct import FinancialProductMiniModel, AccountInfoModel
+from schemas.user import UserInfoModel, MerchantModel
 
 class CreateLoanApplicationModel(BaseModel):
     product_id: int
@@ -93,6 +94,8 @@ class LoanModel(BaseModel):
     collections: Optional[List[CollectionModel]] = None
     account: Optional[AccountInfoModel] = None
     loan_account: Optional[AccountInfoModel] = None
+    user: Optional[UserInfoModel] = None
+    merchant: Optional[MerchantModel] = None
 
     class Config:
         orm_mode = True
@@ -158,6 +161,8 @@ class LoanApplicationModel(BaseModel):
     created_at: Optional[datetime] = None
     financial_product: Optional[FinancialProductMiniModel] = None
     loan: Optional[LoanMiniModel] = None
+    user: Optional[UserInfoModel] = None
+    merchant: Optional[MerchantModel] = None
 
     class Config:
         orm_mode = True

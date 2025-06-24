@@ -6,6 +6,7 @@ from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
 from sqlalchemy.orm import relationship
+from models.users import User
 
 
 class Loan(Base):
@@ -14,8 +15,8 @@ class Loan(Base):
      
     id = Column(BigInteger, primary_key=True, index=True)
     application_id = Column(BigInteger, ForeignKey("loan_applications.id"))
-    user_id = Column(BigInteger, default=0)
-    merchant_id = Column(BigInteger, default=0)
+    user_id = Column(BigInteger, ForeignKey('users.id'))
+    merchant_id = Column(BigInteger, ForeignKey('merchants.id'))
     account_id = Column(BigInteger, ForeignKey("accounts.id"))
     loan_account_id = Column(BigInteger, ForeignKey("accounts.id"))
     gl_account_id = Column(BigInteger, ForeignKey("general_ledger_accounts.id"))
@@ -40,6 +41,8 @@ class Loan(Base):
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
     application = relationship('LoanApplication', back_populates='loan', uselist=False)
+    user = relationship('User')
+    merchant = relationship('Merchant')
     collections = relationship('Collection', back_populates='loan', foreign_keys='Collection.loan_id', uselist=True)
     account = relationship('Account', foreign_keys=[account_id], uselist=False)
     loan_account = relationship('Account', foreign_keys=[loan_account_id], uselist=False)
@@ -84,13 +87,13 @@ def force_delete_loan(db: Session, id: int=0, commit: bool=False):
     return True
 
 def get_single_loan_by_id(db: Session, id: int=0):
-    return db.query(Loan).filter_by(id = id).options(joinedload(Loan.application), joinedload(Loan.collections), joinedload(Loan.account), joinedload(Loan.loan_account)).first()
+    return db.query(Loan).filter_by(id = id).options(joinedload(Loan.application), joinedload(Loan.collections), joinedload(Loan.account), joinedload(Loan.loan_account), joinedload(Loan.user).joinedload(User.profile)).first()
 
 def get_just_single_loan_by_id(db: Session, id: int=0):
     return db.query(Loan).filter_by(id = id).first()
 
 def get_loans(db: Session, filters: Dict={}):
-    query = db.query(Loan).options(joinedload(Loan.application), joinedload(Loan.collections), joinedload(Loan.account), joinedload(Loan.loan_account))
+    query = db.query(Loan).options(joinedload(Loan.application), joinedload(Loan.collections), joinedload(Loan.account), joinedload(Loan.loan_account), joinedload(Loan.user).joinedload(User.profile))
     if 'user_id' in filters:
         query = query.filter_by(user_id = filters['user_id'])
     if 'application_id' in filters:
