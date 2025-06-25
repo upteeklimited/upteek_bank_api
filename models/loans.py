@@ -1,5 +1,5 @@
 from typing import Dict
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc, func
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger, DECIMAL, Float, TIMESTAMP, SmallInteger, Text, desc, select, func
 from sqlalchemy.orm import Session, joinedload
 # from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import and_, or_
@@ -7,6 +7,7 @@ from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
 from sqlalchemy.orm import relationship
 from models.users import User
+from models.collections import Collection
 
 
 class Loan(Base):
@@ -116,6 +117,42 @@ def sum_of_loans(db: Session, filters: Dict={}):
     query = db.query(func.sum(Loan.amount))
     if 'user_id' in filters:
         query = query.filter_by(user_id = filters['user_id'])
-    if 'status' in filters:
-        query = query.filter_by(status = filters['status'])
+    if 'application_id' in filters:
+        query = query.filter_by(application_id = filters['application_id'])
+    if 'merchant_id' in filters:
+        query = query.filter_by(merchant_id = filters['merchant_id'])
+    if 'account_id' in filters:
+        query = query.filter_by(account_id = filters['account_id'])
+    if 'loan_account_id' in filters:
+        query = query.filter_by(loan_account_id = filters['loan_account_id'])
+    if 'gl_account_id' in filters:
+        query = query.filter_by(gl_account_id = filters['gl_account_id'])
+    if 'restructured_application_id' in filters:
+        query = query.filter_by(restructured_application_id = filters['restructured_application_id'])
+    if 'card_id' in filters:
+        query = query.filter_by(card_id = filters['card_id'])
     return query.scalar() or 0
+
+def count_loans(db: Session, filters: Dict={}):
+    query = db.query(Loan)
+    if 'user_id' in filters:
+        query = query.filter_by(user_id = filters['user_id'])
+    if 'application_id' in filters:
+        query = query.filter_by(application_id = filters['application_id'])
+    if 'merchant_id' in filters:
+        query = query.filter_by(merchant_id = filters['merchant_id'])
+    if 'account_id' in filters:
+        query = query.filter_by(account_id = filters['account_id'])
+    if 'loan_account_id' in filters:
+        query = query.filter_by(loan_account_id = filters['loan_account_id'])
+    if 'gl_account_id' in filters:
+        query = query.filter_by(gl_account_id = filters['gl_account_id'])
+    if 'restructured_application_id' in filters:
+        query = query.filter_by(restructured_application_id = filters['restructured_application_id'])
+    if 'card_id' in filters:
+        query = query.filter_by(card_id = filters['card_id'])
+    return query.count()
+
+def count_loans_with_pending_collections(db: Session):
+    subquery = select(Collection.loan_id).where(Collection.status == 0).subquery()
+    return db.query(func.count(Loan.id)).filter(Loan.id.in_(subquery)).scalar() or 0

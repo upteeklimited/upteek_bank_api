@@ -212,3 +212,21 @@ class LoanApplicationDeclineModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+class LoanDataModel(BaseModel):
+    total_loan_balance: Optional[float] = 0
+    total_disbursed_loans: Optional[int] = 0
+    total_overdue_loans: Optional[int] = 0
+    total_overdue_loans_amount: Optional[float] = 0
+    total_pending_loans_requests: Optional[int] = 0
+
+    class Config:
+        orm_mode = True
+
+class LoanDataResponseModel(BaseModel):
+    status: bool
+    message: str
+    data: Optional[LoanDataModel] = None
+
+    class Config:
+        orm_mode = True

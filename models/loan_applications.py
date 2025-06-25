@@ -122,3 +122,19 @@ def get_loan_applications(db: Session, filters: Dict={}):
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(LoanApplication.created_at))
+
+def count_loan_applications(db: Session, filters: Dict={}):
+    query = db.query(LoanApplication)
+    if 'user_id' in filters:
+        query = query.filter_by(user_id = filters['user_id'])
+    if 'merchant_id' in filters:
+        query = query.filter_by(merchant_id = filters['merchant_id'])
+    if 'account_id' in filters:
+        query = query.filter_by(account_id = filters['account_id'])
+    if 'card_id' in filters:
+        query = query.filter_by(card_id = filters['card_id'])
+    if 'approval_level' in filters:
+        query = query.filter_by(approval_level = filters['approval_level'])
+    if 'status' in filters:
+        query = query.filter_by(status = filters['status'])
+    return query.count()

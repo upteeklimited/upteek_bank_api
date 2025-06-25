@@ -6,6 +6,7 @@ from sqlalchemy.sql.expression import and_, or_
 from sqlalchemy.sql.schema import ForeignKey
 from database.db import Base, get_laravel_datetime, get_added_laravel_datetime, compare_laravel_datetime_with_today
 from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
 
 
 class Collection(Base):
@@ -82,3 +83,11 @@ def get_collections(db: Session, filters: Dict={}):
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(Collection.created_at))
+
+def sum_of_overdue_collections(db: Session):
+    today_utc = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    return db.query(func.sum(Collection.amount)).filter(
+        Collection.status == 0,
+        Collection.collected_at < today_utc,
+        Collection.deleted_at.is_(None)
+    ).scalar() or 0.0

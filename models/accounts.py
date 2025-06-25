@@ -178,3 +178,21 @@ def count_accounts(db: Session, filters: Dict={}):
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.count()
+
+def sum_of_account_balances(db: Session, filters: Dict={}):
+    query = db.query(func.sum(Account.available_balance))
+    if 'account_type_id' in filters:
+        query = query.filter_by(account_type_id = filters['account_type_id'])
+    if 'product_id' in filters:
+        query = query.join(AccountType).filter(AccountType.product_id == filters['product_id'])
+    if 'product_type' in filters:
+        query = query.join(AccountType).join(FinancialProduct).filter(FinancialProduct.product_type == filters['product_type'])
+    if 'product_types' in filters:
+        query = query.join(AccountType).join(FinancialProduct).filter(FinancialProduct.product_type.in_(filters['product_types']))
+    if 'user_id' in filters:
+        query = query.filter_by(user_id = filters['user_id'])
+    if 'merchant_id' in filters:
+        query = query.filter_by(merchant_id = filters['merchant_id'])
+    if 'status' in filters:
+        query = query.filter_by(status = filters['status'])
+    return query.scalar() or 0
