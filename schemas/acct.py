@@ -193,6 +193,7 @@ class UpdateFinancialProductModel(BaseModel):
     user_type: Optional[int] = None
     individual_compliance_type: Optional[int] = None
     merchant_compliance_type: Optional[int] = None
+    interest_rate: Optional[float] = None
     overdrawn_interest_rate: Optional[float] = None
     charge_if_overdrawn: Optional[float] = None
     charges: Optional[float] = None
