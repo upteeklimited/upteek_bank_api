@@ -23,6 +23,8 @@ class LoanApplicationMiniModel(BaseModel):
     account_id: Optional[int] = None
     card_id: Optional[int] = None
     amount: Optional[float] = None
+    interest_amount: Optional[float] = None
+    total_amount: Optional[float] = None
     purpose: Optional[str] = None
     tenure: Optional[int] = None
     interest_rate: Optional[float] = None
@@ -135,6 +137,8 @@ class LoanApplicationModel(BaseModel):
     account_id: Optional[int] = None
     card_id: Optional[int] = None
     amount: Optional[float] = None
+    interest_amount: Optional[float] = None
+    total_amount: Optional[float] = None
     purpose: Optional[str] = None
     tenure: Optional[int] = None
     interest_rate: Optional[float] = None
