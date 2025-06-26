@@ -186,8 +186,8 @@ def do_authorizer_loan_application_approval(db: Session, user_id: int=0, loan_ap
         trans_debit = get_single_transaction_type_by_code(db=db, code="009")
         # trans_credit = get_single_transaction_type_by_code(db=db, code="010")
         reference = generate_transaction_reference(tran_type=trans_debit.name)
-        interest = (loan_application.interest_rate/100)* loan_application.amount
-        interest = round(interest, 2)
+        interest = loan_application.interest_amount
+        # interest = round(interest, 2)
         currency_id = financial_product.currency_id
         loan = create_loan(db=db, user_id=customer_user.id, merchant_id=customer_user.merchant_id, application_id=loan_application_id, account_id=account.id, gl_account_id=financial_product.gl_id, amount=loan_application.amount, unpaid_principal=loan_application.amount, unearned_interest=interest, status=1)
         da = debit_account(db=db, account_id=loan_account_id, amount=loan_application.amount, override=True)
@@ -225,6 +225,7 @@ def do_authorizer_loan_application_approval(db: Session, user_id: int=0, loan_ap
         create_loan_application_log(db=db, application_id=loan_application_id, approved_user_id=user_id, approval_level=3, status=1, approved_at=get_laravel_datetime())
         update_loan_application(db=db, id=loan_application_id, values={
             'approval_level': 3,
+            'status': 1,
         })
         return {
             'status': True,
