@@ -184,12 +184,12 @@ def do_authorizer_loan_application_approval(db: Session, user_id: int=0, loan_ap
         new_loan_acct = loan_acc_req['data']
         loan_account_id = new_loan_acct.id
         trans_debit = get_single_transaction_type_by_code(db=db, code="009")
-        # trans_credit = get_single_transaction_type_by_code(db=db, code="010")
+        trans_credit = get_single_transaction_type_by_code(db=db, code="010")
         reference = generate_transaction_reference(tran_type=trans_debit.name)
         interest = loan_application.interest_amount
         # interest = round(interest, 2)
         currency_id = financial_product.currency_id
-        loan = create_loan(db=db, user_id=customer_user.id, merchant_id=customer_user.merchant_id, application_id=loan_application_id, account_id=account.id, gl_account_id=financial_product.gl_id, amount=loan_application.amount, unpaid_principal=loan_application.amount, unearned_interest=interest, status=1)
+        loan = create_loan(db=db, user_id=customer_user.id, merchant_id=customer_user.merchant_id, application_id=loan_application_id, account_id=account.id, loan_account_id=loan_account_id, gl_account_id=financial_product.gl_id, amount=loan_application.amount, unpaid_principal=loan_application.amount, unearned_interest=interest, status=1)
         da = debit_account(db=db, account_id=loan_account_id, amount=loan_application.amount, override=True)
         if da['status'] == False:
             return {
@@ -197,7 +197,7 @@ def do_authorizer_loan_application_approval(db: Session, user_id: int=0, loan_ap
                 'message': da['message'],
                 'data': None
             }
-        create_transaction(db=db, country_id=customer_user.country_id, currency_id=currency_id, user_id=customer_user.id, merchant_id=customer_user.merchant_id, account_id=loan_account_id, type_id=trans_debit.id, loan_id=loan.id, action=TRANSACTION_ACTIONS['debit'], reference=reference, narration="Loan Disbursement", amount=loan_application.amount, previous_balance=0, new_balance=da['data']['available_balance'], status=1, created_by=user_id)
+        create_transaction(db=db, country_id=customer_user.country_id, currency_id=currency_id, user_id=customer_user.id, merchant_id=customer_user.merchant_id, account_id=loan_account_id, type_id=trans_credit.id, loan_id=loan.id, action=TRANSACTION_ACTIONS['debit'], reference=reference, narration="Loan Disbursement", amount=loan_application.amount, previous_balance=0, new_balance=da['data']['available_balance'], status=1, created_by=user_id)
         acct_prev_balance = account.available_balance
         ca = credit_account(db=db, account_id=account.id, amount=loan_application.amount)
         if ca['status'] == False:

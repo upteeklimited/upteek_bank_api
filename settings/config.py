@@ -43,5 +43,17 @@ def load_env_config():
         'apple_team_id': os.getenv('APPLE_TEAM_ID'),
         'apple_key_id': os.getenv('APPLE_KEY_ID'),
         'apple_private_key': os.getenv('APPLE_PRIVATE_KEY'),
+        'smile_id_partner_id': os.getenv('SMILE_ID_PARTNER_ID'),
+        'smile_id_api_key': os.getenv('SMILE_ID_API_KEY'),
+        'smile_id_server_type': os.getenv('SMILE_ID_SERVER_TYPE'),
+        'smile_id_url': os.getenv('SMILE_ID_URL'),
+        'squadco_secret_key': os.getenv('SQUADCO_SECRET_KEY'),
+        'squadco_public_key': os.getenv('SQUADCO_PUBLIC_KEY'),
+        'squadco_url': os.getenv('SQUADCO_URL'),
+        'squadco_merchant_id': os.getenv('SQUADCO_MERCHANT_ID'),
+        'fincra_secret_key': os.getenv('FINCRA_SECRET_KEY'),
+        'fincra_public_key': os.getenv('FINCRA_PUBLIC_KEY'),
+        'fincra_webhook_key': os.getenv('FINCRA_WEBHOOK_KEY'),
+        'fincra_url': os.getenv('FINCRA_URL'),
     }
 
