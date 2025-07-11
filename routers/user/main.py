@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, Query
 from database.db import get_session, get_db
 from sqlalchemy.orm import Session
 from modules.authentication.auth import auth
@@ -32,33 +32,31 @@ async def customers(request: Request, user=Depends(auth.auth_wrapper), db: Sessi
     return retrieve_customers(db=db)
 
 @router.get("/search", response_model=Page[UserMainModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def search(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), username: str = None, email: str = None, phone_number: str = None, status: int = None):
+async def search(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), username: str = Query(None), email: str = Query(None), phone_number: str = Query(None), status: int = Query(None)):
     filters = {
         'user_type': USER_TYPES['bank']['num']
     }
-    if username is not None:
+    if username:
         filters['username'] = username
-    if email is not None:
+    if email:
         filters['email'] = email
-    if phone_number is not None:
+    if phone_number:
         filters['phone_number'] = phone_number
-    if status is not None:
-        if status > 0:
-            filters['status'] = status
+    if status:
+        filters['status'] = status
     return retrieve_users_by_search(db=db, filters=filters)
 
 @router.get("/customers/search", response_model=Page[UserMainModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def customers_search(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), username: str = None, email: str = None, phone_number: str = None, status: int = None):
+async def customers_search(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), username: str = Query(None), email: str = Query(None), phone_number: str = Query(None), status: int = Query(None)):
     filters = {}
-    if username is not None:
+    if username:
         filters['username'] = username
-    if email is not None:
+    if email:
         filters['email'] = email
-    if phone_number is not None:
+    if phone_number:
         filters['phone_number'] = phone_number
-    if status is not None:
-        if status > 0:
-            filters['status'] = status
+    if status:
+        filters['status'] = status
     return retrieve_customers_by_search(db=db, filters=filters)
 
 @router.get("/get_single/{user_id}", response_model=UserMainResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})

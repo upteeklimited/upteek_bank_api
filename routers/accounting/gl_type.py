@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, Query
 from modules.authentication.auth import auth
 from modules.accounting.gl_types import create_new_gl_type, update_existing_gl_type, delete_exisiting_gl_type, retrieve_gl_types, retrieve_single_gl_type, retrieve_single_gl_type_by_code
 from database.schema import ErrorResponse, PlainResponse, GLTypeModel, CreateGLTypeModel, UpdateGLTypeModel, GLTypeResponseModel
@@ -28,15 +28,14 @@ async def delete(request: Request, user=Depends(auth.auth_wrapper), db: Session 
     return delete_exisiting_gl_type(db=db, gl_type_id=type_id)
 
 @router.get("/", response_model=Page[GLTypeModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def get_all(request: Request, db: Session = Depends(get_db), name: str = None, account_code: str = None, status: int = 0):
+async def get_all(request: Request, db: Session = Depends(get_db), name: str = Query(None), account_code: str = Query(None), status: int = Query(None)):
     filters = {}
-    if name is not None:
+    if name:
         filters['name'] = name
-    if account_code is not None:
+    if account_code:
         filters['account_code'] = account_code
-    if status is not None:
-        if  status > 0:
-            filters['status'] = status
+    if status:
+        filters['status'] = status
     return retrieve_gl_types(db=db, filters=filters)
 
 @router.get("/get_single/{type_id}", response_model=GLTypeResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})

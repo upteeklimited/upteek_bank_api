@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, Query
 from modules.authentication.auth import auth
 from modules.accounting.prods import create_new_financial_product, update_existing_financial_product, delete_existing_financial_product, retrieve_financial_products, retrieve_single_financial_product
 from database.schema import ErrorResponse, PlainResponse, FinancialProductModel, CreateFinancialProductModel, UpdateFinancialProductModel, FinancialProductResponseModel
@@ -27,31 +27,24 @@ async def delete(request: Request, user=Depends(auth.auth_wrapper), db: Session 
     return delete_existing_financial_product(db=db, product_id=product_id)
 
 @router.get("/", response_model=Page[FinancialProductModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def get_all(request: Request, db: Session = Depends(get_db), name: str = None, status: int = 0, country_id: int = 0, currency_id: int = 0, product_type: int = 0, user_type: int = 0, individual_compliance_type: int = 0, merchant_compliance_type: int = 0):
+async def get_all(request: Request, db: Session = Depends(get_db), name: str = Query(None), status: int = Query(None), country_id: int = Query(None), currency_id: int = Query(None), product_type: int = Query(None), user_type: int = Query(None), individual_compliance_type: int = Query(None), merchant_compliance_type: int = Query(None)):
     filters = {}
-    if name is not None:
+    if name:
         filters['name'] = name
-    if status is not None:
-        if  status > 0:
-            filters['status'] = status
-    if country_id is not None:
-        if  country_id > 0:
-            filters['country_id'] = country_id
-    if currency_id is not None:
-        if  currency_id > 0:
-            filters['currency_id'] = currency_id
-    if product_type is not None:
-        if  product_type > 0:
-            filters['product_type'] = product_type
-    if user_type is not None:
-        if  user_type > 0:
-            filters['user_type'] = user_type
-    if individual_compliance_type is not None:
-        if  individual_compliance_type > 0:
-            filters['individual_compliance_type'] = individual_compliance_type
-    if merchant_compliance_type is not None:
-        if  merchant_compliance_type > 0:
-            filters['merchant_compliance_type'] = merchant_compliance_type
+    if status:
+        filters['status'] = status
+    if country_id:
+        filters['country_id'] = country_id
+    if currency_id:
+        filters['currency_id'] = currency_id
+    if product_type:
+        filters['product_type'] = product_type
+    if user_type:
+        filters['user_type'] = user_type
+    if individual_compliance_type:
+        filters['individual_compliance_type'] = individual_compliance_type
+    if merchant_compliance_type:
+        filters['merchant_compliance_type'] = merchant_compliance_type
     return retrieve_financial_products(db=db, filters=filters)
 
 @router.get("/get_single/{product_id}", response_model=FinancialProductResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})

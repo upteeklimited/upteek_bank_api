@@ -84,6 +84,9 @@ def get_collections(db: Session, filters: Dict={}):
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(Collection.created_at))
 
+def count_collection_loan_id_collected_at(db: Session, loan_id: int=0, collected_at: str=None):
+    return db.query(Collection).filter(and_(Collection.loan_id == loan_id, Collection.collected_at == collected_at)).count()
+
 def sum_of_overdue_collections(db: Session):
     today_utc = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
     return db.query(func.sum(Collection.amount)).filter(

@@ -139,6 +139,9 @@ class LoanApplicationModel(BaseModel):
     amount: Optional[float] = None
     interest_amount: Optional[float] = None
     total_amount: Optional[float] = None
+    top_up_amount: Optional[float] = None
+    top_up_interest_amount: Optional[float] = None
+    top_up_total_amount: Optional[float] = None
     purpose: Optional[str] = None
     tenure: Optional[int] = None
     interest_rate: Optional[float] = None
@@ -161,6 +164,7 @@ class LoanApplicationModel(BaseModel):
     payment_data: Optional[str] = None
     approval_level: Optional[int] = None
     decline_reason: Optional[str] = None
+    top_up_status: Optional[int] = None
     status: Optional[int] = None  # 0 -> pending, 1 -> approved, 2 -> rejected, 3 -> cancelled.
     created_at: Optional[datetime] = None
     financial_product: Optional[FinancialProductMiniModel] = None

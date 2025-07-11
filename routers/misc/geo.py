@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, Query
 from modules.miscelleanous.geo import retrieve_countries, retrieve_single_country, retrieve_single_country_by_code, retrieve_currencies, retrieve_single_currency, retrieve_single_currency_by_code, retrieve_states, retrieve_single_state, retrieve_cities, retrieve_single_city, retrieve_lgas, retrieve_single_lga
 from database.schema import ErrorResponse, CountryModel, CountryResponseModel, CurrencyModel, CurrencyResponseModel, StateModel, StateResponseModel, CityModel, CityResponseModel, LGAModel, LGAResponseModel
 from database.db import get_session
@@ -36,11 +36,10 @@ async def currencies_get_single(request: Request, db: Session = Depends(get_sess
     return retrieve_single_currency_by_code(db=db, code=currency_code)
 
 @router.get("/states", response_model=Page[StateModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def states(request: Request, db: Session = Depends(get_session), country_id: int = 0):
+async def states(request: Request, db: Session = Depends(get_session), country_id: int = Query(None)):
     filters = {}
-    if country_id is not None:
-        if country_id > 0:
-            filters['country_id'] = country_id
+    if country_id:
+        filters['country_id'] = country_id
     return retrieve_states(db=db, filters=filters)
 
 @router.get("/states/get_single/{state_id}", response_model=StateResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
@@ -48,11 +47,10 @@ async def states_get_single(request: Request, db: Session = Depends(get_session)
     return retrieve_single_state(db=db, state_id=state_id)
 
 @router.get("/cities", response_model=Page[CityModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def cities(request: Request, db: Session = Depends(get_session), state_id: int = 0):
+async def cities(request: Request, db: Session = Depends(get_session), state_id: int = Query(None)):
     filters = {}
-    if state_id is not None:
-        if state_id > 0:
-            filters['state_id'] = state_id
+    if state_id:
+        filters['state_id'] = state_id
     return retrieve_cities(db=db, filters=filters)
 
 @router.get("/cities/get_single/{city_id}", response_model=CityResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
@@ -60,11 +58,10 @@ async def cities_get_single(request: Request, db: Session = Depends(get_session)
     return retrieve_single_city(db=db, city_id=city_id)
 
 @router.get("/lgas", response_model=Page[LGAModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def lgas(request: Request, db: Session = Depends(get_session), state_id: int = 0):
+async def lgas(request: Request, db: Session = Depends(get_session), state_id: int = Query(None)):
     filters = {}
-    if state_id is not None:
-        if state_id > 0:
-            filters['state_id'] = state_id
+    if state_id:
+        filters['state_id'] = state_id
     return retrieve_lgas(db=db, filters=filters)
 
 @router.get("/lgas/get_single/{lga_id}", response_model=LGAResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})

@@ -93,6 +93,9 @@ def get_single_loan_by_id(db: Session, id: int=0):
 def get_just_single_loan_by_id(db: Session, id: int=0):
     return db.query(Loan).filter_by(id = id).first()
 
+def get_just_single_loan_by_application_id(db: Session, application_id: int=0):
+    return db.query(Loan).filter_by(application_id = application_id).first()
+
 def get_loans(db: Session, filters: Dict={}):
     query = db.query(Loan).options(joinedload(Loan.application), joinedload(Loan.collections), joinedload(Loan.account), joinedload(Loan.loan_account), joinedload(Loan.user).joinedload(User.profile))
     if 'user_id' in filters:

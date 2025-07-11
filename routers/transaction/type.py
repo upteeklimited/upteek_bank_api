@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, Query
 from modules.authentication.auth import auth
 from modules.postings.trans_type import create_new_transaction_type, update_existing_transaction_type, delete_existing_transaction_type, retrive_transaction_type, retrieve_single_transaction_type, retrieve_single_transaction_type_by_code
 from database.schema import ErrorResponse, PlainResponse, TransactionTypeModel, CreateTransTypeModel, UpdateTransTypeModel, TransTypeResponseModel
@@ -27,33 +27,26 @@ async def delete(request: Request, user=Depends(auth.auth_wrapper), db: Session 
     return delete_existing_transaction_type(db=db, type_id=type_id)
 
 @router.get("/", response_model=Page[TransactionTypeModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def get_all(request: Request, db: Session = Depends(get_db), name: str = None, code: str = None, action: int = None, chargeable: int = None, charge_type: int = None, require_approval: int = 0, is_system: int = 0, status: int = 0, created_by: int = 0):
+async def get_all(request: Request, db: Session = Depends(get_db), name: str = Query(None), code: str = Query(None), action: int = Query(None), chargeable: int = Query(None), charge_type: int = Query(None), require_approval: int = Query(None), is_system: int = Query(None), status: int = Query(None), created_by: int = Query(None)):
     filters = {}
-    if action is not None:
-        if action > 0:
-            filters['action'] = action
-    if name is not None:
+    if action:
+        filters['action'] = action
+    if name:
         filters['name'] = name
-    if code is not None:
+    if code:
         filters['code'] = code
-    if status is not None:
-        if  status > 0:
-            filters['status'] = status
-    if created_by is not None:
-        if created_by > 0:
-            filters['created_by'] = created_by
-    if chargeable is not None:
-        if chargeable > 0:
-            filters['chargeable'] = chargeable
-    if charge_type is not None:
-        if charge_type > 0:
-            filters['charge_type'] = charge_type
-    if require_approval is not None:
-        if require_approval > 0:
-            filters['require_approval'] = require_approval
-    if is_system is not None:
-        if is_system > 0:
-            filters['is_system'] = is_system
+    if status:
+        filters['status'] = status
+    if created_by:
+        filters['created_by'] = created_by
+    if chargeable:
+        filters['chargeable'] = chargeable
+    if charge_type:
+        filters['charge_type'] = charge_type
+    if require_approval:
+        filters['require_approval'] = require_approval
+    if is_system:
+        filters['is_system'] = is_system
     return retrive_transaction_type(db=db, filters=filters)
 
 @router.get("/get_single/{type_id}", response_model=TransTypeResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})

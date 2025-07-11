@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, Query
 from modules.authentication.auth import auth
 from modules.accounting.gls import create_gl, update_gl, delete_gl, retrieve_gls, retrieve_single_gl, retrieve_single_gl_by_account_number
 from database.schema import ErrorResponse, PlainResponse, GLModel, CreateGLModel, UpdateGLModel, GLResponseModel
@@ -28,24 +28,20 @@ async def delete(request: Request, user=Depends(auth.auth_wrapper), db: Session 
     return delete_gl(db=db, gl_id=gl_id)
 
 @router.get("/", response_model=Page[GLModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def get_all(request: Request, db: Session = Depends(get_db), name: str = None, account_number: str = None, status: int = 0, type_id: int = 0, parent_id: int = 0, manager_id: int = 0):
+async def get_all(request: Request, db: Session = Depends(get_db), name: str = Query(None), account_number: str = Query(None), status: int = Query(None), type_id: int = Query(None), parent_id: int = Query(None), manager_id: int = Query(None)):
     filters = {}
-    if name is not None:
+    if name:
         filters['name'] = name
-    if account_number is not None:
+    if account_number:
         filters['account_number'] = account_number
-    if status is not None:
-        if  status > 0:
-            filters['status'] = status
-    if type_id is not None:
-        if  type_id > 0:
-            filters['type_id'] = type_id
-    if parent_id is not None:
-        if  parent_id > 0:
-            filters['parent_id'] = parent_id
-    if manager_id is not None:
-        if  manager_id > 0:
-            filters['manager_id'] = manager_id
+    if status:
+        filters['status'] = status
+    if type_id:
+        filters['type_id'] = type_id
+    if parent_id:
+        filters['parent_id'] = parent_id
+    if manager_id:
+        filters['manager_id'] = manager_id
     return retrieve_gls(db=db, filters=filters)
 
 @router.get("/get_single/{gl_id}", response_model=GLResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, Query
 from modules.authentication.auth import auth
 from modules.loans.applications import retrieve_loan_applications, retrieve_single_loan_application, do_entry_level_application_approval, do_entry_level_application_rejection, do_authorizer_loan_application_rejection, do_authorizer_loan_application_approval
 from database.schema import ErrorResponse, PlainResponse, LoanApplicationModel, LoanApplicationResponseModel, LoanResponseModel, LoanApplicationApprovalModel, LoanApplicationDeclineModel
@@ -14,20 +14,18 @@ router = APIRouter(
 
 
 @router.get("/get_all", response_model=Page[LoanApplicationModel], responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
-async def get_all(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), user_id: int = 0, merchant_id: int = 0, approval_level: int = 0, status: int = None):
+async def get_all(request: Request, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db), user_id: int = Query(None), merchant_id: int = Query(None), approval_level: int = Query(None), status: int = Query(None), top_up_status: int = Query(None)):
     filters = {}
-    if user_id is not None:
-        if  user_id > 0:
-            filters['user_id'] = user_id
-    if merchant_id is not None:
-        if  merchant_id > 0:
-            filters['merchant_id'] = merchant_id
-    if approval_level is not None:
-        if  user_id > 0:
-            filters['approval_level'] = approval_level
-    if status is not None:
-        if  status > 0:
-            filters['status'] = status
+    if user_id:
+        filters['user_id'] = user_id
+    if merchant_id:
+        filters['merchant_id'] = merchant_id
+    if approval_level:
+        filters['approval_level'] = approval_level
+    if status:
+        filters['status'] = status
+    if top_up_status:
+        filters['top_up_status'] = top_up_status
     return retrieve_loan_applications(db=db, filters=filters)
 
 @router.get("/get_single/{loan_application_id}", response_model=LoanApplicationResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})

@@ -18,6 +18,9 @@ class InvoiceRequest(Base):
     product_id = Column(BigInteger, default=0)
     description = Column(Text, nullable=True)
     notes = Column(Text, nullable=True)
+    preferred_date_time = Column(String, nullable=True)
+    location = Column(String, nullable=True)
+    budget_range = Column(String, nullable=True)
     files_meta_data = Column(JSONText)
     status = Column(SmallInteger, default=0)
     approved_by = Column(BigInteger, default=0)
@@ -29,8 +32,8 @@ class InvoiceRequest(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_invoice_request(db: Session, user_id: int = 0, product_id: int = 0, description: str = None, notes: str = None, files_meta_data: Any = None, status: int = 0, approved_by: int = 0, approved_at: str = None, rejected_by: int = 0, rejection_reason: str = None, rejected_at: str = None, commit: bool=False):
-    inv_req = InvoiceRequest(user_id=user_id, product_id=product_id, description=description, notes=notes, files_meta_data=files_meta_data, status=status, approved_by=approved_by, approved_at=approved_at, rejected_by=rejected_by, rejection_reason=rejection_reason, rejected_at=rejected_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_invoice_request(db: Session, user_id: int = 0, product_id: int = 0, description: str = None, notes: str = None, preferred_date_time: str = None, location: str = None, budget_range: str = None, files_meta_data: Any = None, status: int = 0, approved_by: int = 0, approved_at: str = None, rejected_by: int = 0, rejection_reason: str = None, rejected_at: str = None, commit: bool=False):
+    inv_req = InvoiceRequest(user_id=user_id, product_id=product_id, description=description, notes=notes, preferred_date_time=preferred_date_time, location=location, budget_range=budget_range, files_meta_data=files_meta_data, status=status, approved_by=approved_by, approved_at=approved_at, rejected_by=rejected_by, rejection_reason=rejection_reason, rejected_at=rejected_at, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(inv_req)
     if commit == False:
         db.flush()

@@ -44,3 +44,8 @@ def e_send_token(username: str=None, email: str=None, token: str=None, minutes: 
     msg = "<p>Hello " + str(username) + ",<br><br>Use the code below to complete your action:<br><br>"+str(token)+"<br><br>The above token expires in " + str(minutes) + " minutes<br>If you didn't originate this please reach out to our support team at support@upteek.com</p>"
     footnote = "💕 & ✨, Upteek."
     return send_email(subject=title, recipients=email, title=title, body=msg, foot=footnote)
+
+def e_notification(email: str=None, title: str=None, msg: str=None):
+    msg = "<p>" + str(msg) + "</p>"
+    footnote = "💕 & ✨, Upteek."
+    return send_email(subject=title, recipients=email, title=title, body=msg, foot=footnote)
