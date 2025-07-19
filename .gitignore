@@ -90,6 +90,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+firebase.json
+apple.p8
 
 # Spyder project settings
 .spyderproject
