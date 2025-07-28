@@ -2,6 +2,7 @@ from typing import Dict, List
 import firebase_admin
 from firebase_admin import auth, credentials, messaging
 import os
+import traceback
 import json
 
 # current_dir = os.path.dirname(os.path.abspath(__file__))
