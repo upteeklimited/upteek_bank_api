@@ -50,7 +50,7 @@ async def entry_level_reject(request: Request, fields: LoanApplicationDeclineMod
         raise HTTPException(status_code=400, detail=req['message'])
     return req
 
-@router.post("/authorizer/approve")
+@router.post("/authorizer/approve", response_model=LoanResponseModel, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
 async def authorizer_approve(request: Request, fields: LoanApplicationApprovalModel, user=Depends(auth.auth_wrapper), db: Session = Depends(get_db)):
     if user['role'] != USER_TYPES['bank']['roles']['auth']['num']:
         raise HTTPException(status_code=403, detail={'status': False, 'message': 'You are not authorized to perform this action'})
