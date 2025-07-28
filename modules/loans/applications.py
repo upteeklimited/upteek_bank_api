@@ -86,7 +86,7 @@ def do_entry_level_application_rejection(db: Session, user_id: int=0, loan_appli
         })
         if user is not None:
             if user.device_token is not None:
-                fb_loan_application_rejection(token=user.device_token, data={'loan_application_id': loan_application_id})
+                fb_loan_application_rejection(token=user.device_token, data={'loan_application_id': str(loan_application_id)})
             notify_loan_application_rejection(db=db, user_id=user.id, meta_data={'loan_application_id': loan_application_id})
             if user.email is not None:
                 e_notification(email=user.email, title="Loan Application Rejected", msg="Your loan application has been rejected")
@@ -262,7 +262,7 @@ def do_authorizer_loan_application_approval(db: Session, user_id: int=0, loan_ap
             })
             if customer_user is not None:
                 if customer_user.device_token is not None:
-                    fb_loan_application_accepted(token=customer_user.device_token, data={'loan_application_id': loan_application_id})
+                    fb_loan_application_accepted(token=customer_user.device_token, data={'loan_application_id': str(loan_application_id)})
                 notify_loan_application_accepted(db=db, user_id=customer_user.id, meta_data={'loan_application_id': loan_application_id})
                 if customer_user.email is not None:
                     e_notification(email=customer_user.email, title="Loan Disbursed", msg="Your loan application has been approved and disbursed")
@@ -328,7 +328,7 @@ def do_authorizer_loan_application_approval(db: Session, user_id: int=0, loan_ap
             })
             if customer_user is not None:
                 if customer_user.device_token is not None:
-                    fb_loan_application_accepted(token=customer_user.device_token, data={'loan_application_id': loan_application_id})
+                    fb_loan_application_accepted(token=customer_user.device_token, data={'loan_application_id': str(loan_application_id)})
                 notify_loan_application_accepted(db=db, user_id=customer_user.id, meta_data={'loan_application_id': loan_application_id})
                 if customer_user.email is not None:
                     e_notification(email=customer_user.email, title="Loan Disbursed", msg="Your loan application has been approved and disbursed")
