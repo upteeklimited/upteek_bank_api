@@ -42,35 +42,42 @@ def send_push(token: str, title: str, body: str, data: Dict={}):
             'data': None
         }
     else:
-        data['icon'] = "ic_notification"
-        data['click_action'] = "FLUTTER_NOTIFICATION_CLICK"
-        message = messaging.Message(
-            token=token,
-            notification=messaging.Notification(
-                title=title,
-                body=body
-            ),
-            android=messaging.AndroidConfig(
-                notification=messaging.AndroidNotification(
-                    icon="ic_notification",  # ✅ Must be in res/drawable folder in your Android app
-                    # color="#f45342",         # optional: background color
-                )
-            ),
-            webpush=messaging.WebpushConfig(
-                notification=messaging.WebpushNotification(
-                    icon="https://app.upteek.com/images/upteek_logo_full_main.png",
-                    badge="https://app.upteek.com/images/icon.png"
-                )
-            ),
-            data=data
-        )
-        response = messaging.send(message)
-        # return {"message_id": response}
-        return {
-            'status': True,
-            'message': 'Success',
-            'data': response,
-        }
+        try:
+            data['icon'] = "ic_notification"
+            data['click_action'] = "FLUTTER_NOTIFICATION_CLICK"
+            message = messaging.Message(
+                token=token,
+                notification=messaging.Notification(
+                    title=title,
+                    body=body
+                ),
+                android=messaging.AndroidConfig(
+                    notification=messaging.AndroidNotification(
+                        icon="ic_notification",  # ✅ Must be in res/drawable folder in your Android app
+                        # color="#f45342",         # optional: background color
+                    )
+                ),
+                webpush=messaging.WebpushConfig(
+                    notification=messaging.WebpushNotification(
+                        icon="https://app.upteek.com/images/upteek_logo_full_main.png",
+                        badge="https://app.upteek.com/images/icon.png"
+                    )
+                ),
+                data=data
+            )
+            response = messaging.send(message)
+            # return {"message_id": response}
+            return {
+                'status': True,
+                'message': 'Success',
+                'data': response,
+            }
+        except Exception as e:
+            return {
+                'status': False,
+                'message': f"{type(e).__name__}: {e}",
+                'data': traceback.format_exc()
+            }
 
 def send_push_multi(tokens: List[str], title: str, body: str, data: Dict={}):
     if len(tokens) == 0:
@@ -80,37 +87,44 @@ def send_push_multi(tokens: List[str], title: str, body: str, data: Dict={}):
             'data': None
         }
     else:
-        data['icon'] = "ic_notification"
-        data['click_action'] = "FLUTTER_NOTIFICATION_CLICK"
-        # Construct the message to send to multiple devices
-        message = messaging.MulticastMessage(
-            tokens=tokens,  # List of up to 500 device FCM tokens
-            notification=messaging.Notification(
-                title=title,
-                body=body
-            ),
-            android=messaging.AndroidConfig(
-                notification=messaging.AndroidNotification(
-                    icon="ic_notification",  # ✅ Must be in res/drawable folder in your Android app
-                    # color="#f45342",         # optional: background color
-                )
-            ),
-            webpush=messaging.WebpushConfig(
-                notification=messaging.WebpushNotification(
-                    icon="https://app.upteek.com/images/upteek_logo_full_main.png",
-                    badge="https://app.upteek.com/images/icon.png"
-                )
-            ),
-            data=data
-        )
-        response = messaging.send_multicast(message)
-        resp_data =  {
-            "success_count": response.success_count,
-            "failure_count": response.failure_count,
-            "responses": [r.__dict__ for r in response.responses]
-        }
-        return {
-            'status': True,
-            'message': 'Success',
-            'data': resp_data,
-        }
+        try:
+            data['icon'] = "ic_notification"
+            data['click_action'] = "FLUTTER_NOTIFICATION_CLICK"
+            # Construct the message to send to multiple devices
+            message = messaging.MulticastMessage(
+                tokens=tokens,  # List of up to 500 device FCM tokens
+                notification=messaging.Notification(
+                    title=title,
+                    body=body
+                ),
+                android=messaging.AndroidConfig(
+                    notification=messaging.AndroidNotification(
+                        icon="ic_notification",  # ✅ Must be in res/drawable folder in your Android app
+                        # color="#f45342",         # optional: background color
+                    )
+                ),
+                webpush=messaging.WebpushConfig(
+                    notification=messaging.WebpushNotification(
+                        icon="https://app.upteek.com/images/upteek_logo_full_main.png",
+                        badge="https://app.upteek.com/images/icon.png"
+                    )
+                ),
+                data=data
+            )
+            response = messaging.send_multicast(message)
+            resp_data =  {
+                "success_count": response.success_count,
+                "failure_count": response.failure_count,
+                "responses": [r.__dict__ for r in response.responses]
+            }
+            return {
+                'status': True,
+                'message': 'Success',
+                'data': resp_data,
+            }
+        except Exception as e:
+            return {
+                'status': False,
+                'message': f"{type(e).__name__}: {e}",
+                'data': traceback.format_exc()
+            }
