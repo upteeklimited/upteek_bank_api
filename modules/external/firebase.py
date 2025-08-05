@@ -5,10 +5,10 @@ import os
 import traceback
 import json
 
-# current_dir = os.path.dirname(os.path.abspath(__file__))
-# base_dir = os.path.abspath(os.path.join(current_dir, "../../"))
-# config_path = os.path.join(base_dir, "settings", "firebase.json")
-config_path = "/etc/secrets/firebase.json"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.abspath(os.path.join(current_dir, "../../../"))
+config_path = os.path.join(base_dir, "configs", "firebase.json")
+# config_path = "/etc/secrets/firebase.json"
 
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate(config_path)
