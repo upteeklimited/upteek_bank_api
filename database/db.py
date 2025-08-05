@@ -9,8 +9,6 @@ config = load_env_config()
 
 # SQLALCHEMY_DATABASE_URL  = "mysql://" + str(config['database_user']) + ":" + str(config['database_pass']) + "@" + str(config['server']) + "/" + str(config['database']) + "?charset=utf8mb4"
 SQLALCHEMY_DATABASE_URL  = config['cleardb_database_url']
-# SQLALCHEMY_DATABASE_URL  = 'postgresql://ev_tech:gpoaqhqhZN0OQYNIqO1XAk5O2QKB9ceo@dpg-cnc47df79t8c73eq5ibg-a/ev_tech'
-# SQLALCHEMY_DATABASE_URL  = "mysql://root:@127.0.0.1/puprplepayapp?charset=utf8mb4"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=60)
 
