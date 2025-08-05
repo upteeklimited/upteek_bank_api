@@ -1,4 +1,4 @@
-name: Upteek bankapi Main
+name: Upteek bank api Main
 
 on:
   push:
@@ -11,18 +11,44 @@ jobs:
 
     runs-on: self-hosted
 
-    strategy:
-      matrix:
-        node-version: [22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Delete necessary files and folders
-      run: |
-        cd /var/www/bank && ls -al
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Replace /var/www/adminapi/libs files
+        run: |
+          rm -rf /var/www/bankapi/libs/*
+          cp -r ./* /var/www/bankapi/libs/
+
+      - name: Update deployment report
+        run: |
+          REPORT_FILE="/var/www/bankapi/tmp/restart.txt"
+          TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+
+          # Ensure the tmp folder exists
+          mkdir -p /var/www/bankapi/tmp
+
+          # Read current deployment count if file exists
+          if [ -f "$REPORT_FILE" ]; then
+            LAST_COUNT=$(grep -oP '^Deployment Count: \K\d+' "$REPORT_FILE" | head -n 1)
+            if [ -z "$LAST_COUNT" ]; then
+              COUNT=1
+            else
+              COUNT=$((LAST_COUNT + 1))
+            fi
+          else
+            COUNT=1
+          fi
+
+          # Write the new report
+          echo -e "Deployment Count: $COUNT\nTimestamp: $TIMESTAMP\nStatus: Success" | tee "$REPORT_FILE" > /dev/null
+
+      - name: Cleanup Actions workspace
+        run: |
+          echo "Cleaning up workspace..."
+          find . -mindepth 1 ! -name '.git' -exec rm -rf {} +
