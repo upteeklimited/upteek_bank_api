@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
 import os
 
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
-
-path = os.path.join(BASEDIR, '.env')
+current_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.abspath(os.path.join(current_dir, "../../"))
+path = os.path.join(base_dir, "configs", ".env")
 
 load_dotenv(path)
 
