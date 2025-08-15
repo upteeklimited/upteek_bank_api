@@ -55,5 +55,9 @@ def load_env_config():
         'fincra_public_key': os.getenv('FINCRA_PUBLIC_KEY'),
         'fincra_webhook_key': os.getenv('FINCRA_WEBHOOK_KEY'),
         'fincra_url': os.getenv('FINCRA_URL'),
+        'mailtrap_api_key': os.getenv('MAILTRAP_API_KEY'),
+        'mailtrap_url': os.getenv('MAILTRAP_URL'),
+        'mailtrap_from_email': os.getenv('MAILTRAP_FROM_EMAIL'),
+        'mailtrap_from_name': os.getenv('MAILTRAP_FROM_NAME'),
     }
 
