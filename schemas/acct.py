@@ -175,6 +175,7 @@ class CreateFinancialProductModel(BaseModel):
     interest_tenure_data: Optional[Any] = None
     guarantor_requirement: Optional[int] = None
     amount_to_require_guarantor: Optional[float] = None
+    instant_interest_pay_status: Optional[int] = None
 
     @model_validator(mode='after')
     def check_min_max(self):

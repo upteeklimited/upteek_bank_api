@@ -21,7 +21,6 @@ class Collection(Base):
     bal_principal = Column(Float, default=0)
     bal_interest = Column(Float, default=0)
     retrial_num = Column(Integer, default=0)
-    status = Column(SmallInteger, default=0)
     retrial_status = Column(Text, nullable=True)
     status = Column(SmallInteger, default=0)
     collected_at = Column(TIMESTAMP(timezone=True), nullable=True)
@@ -80,9 +79,14 @@ def get_collections(db: Session, filters: Dict={}):
     query = db.query(Collection)
     if 'loan_id' in filters:
         query = query.filter_by(loan_id = filters['loan_id'])
+    if 'collected_at' in filters:
+        query = query.filter_by(collected_at = filters['collected_at'])
     if 'status' in filters:
         query = query.filter_by(status = filters['status'])
     return query.order_by(desc(Collection.created_at))
+
+def get_collections_by_collected_at(db: Session, collected_at: str=None):
+    return db.query(Collection).filter(func.date(Collection.collected_at) == collected_at).all()
 
 def count_collection_loan_id_collected_at(db: Session, loan_id: int=0, collected_at: str=None):
     return db.query(Collection).filter(and_(Collection.loan_id == loan_id, Collection.collected_at == collected_at)).count()
@@ -94,3 +98,38 @@ def sum_of_overdue_collections(db: Session):
         Collection.collected_at < today_utc,
         Collection.deleted_at.is_(None)
     ).scalar() or 0.0
+
+def count_collection_loan_id_status(db: Session, loan_id: int=0, status: int=0):
+    return db.query(Collection).filter(and_(Collection.loan_id == loan_id, Collection.status == status)).count()
+
+def get_total_principal_before_date(db: Session, before_date: str = None):
+    if not before_date:
+        return 0
+    try:
+        target_datetime = datetime.strptime(before_date, '%Y-%m-%d')
+        
+        result = db.query(func.coalesce(func.sum(Collection.total_principal), 0)).filter(
+            Collection.collected_at < target_datetime,
+            Collection.collected_at.isnot(None)
+        ).scalar()
+        
+        return float(result) if result else 0.0
+    
+    except ValueError:
+        return 0
+
+def get_total_interest_before_date(db: Session, before_date: str = None):
+    if not before_date:
+        return 0
+    try:
+        target_datetime = datetime.strptime(before_date, '%Y-%m-%d')
+        
+        result = db.query(func.coalesce(func.sum(Collection.total_principal), 0)).filter(
+            Collection.collected_at < target_datetime,
+            Collection.collected_at.isnot(None)
+        ).scalar()
+        
+        return float(result) if result else 0.0
+    
+    except ValueError:
+        return 0

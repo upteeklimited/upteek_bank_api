@@ -276,3 +276,12 @@ def format_date_laravel_datetime(date_str: str=None):
     parsed_date = dateparser.parse(date_str)
     formatted_date = parsed_date.strftime("%Y-%m-%d %H:%M:%S") if parsed_date else None
     return formatted_date
+
+def get_current_date_formatted():
+    return datetime.now().strftime('%d-%m-%Y')
+
+def get_current_date_alt_formatted():
+    return datetime.now().strftime('%Y-%m-%d')
+
+def get_current_date_laravel_formatted():
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')

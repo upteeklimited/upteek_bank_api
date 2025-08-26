@@ -117,6 +117,10 @@ def create_product_gls(db: Session, product: FinancialProduct, created_by: int=0
         expense_gl = create_general_ledger_account(db=db, type_id=expense_type_id, name=interest_expense_gl_name, account_number=generate_internal_gl_number(type_code=expense_account_code, last_id=last_gl_id), created_by=created_by, authorized_by=authorized_by)
         expense_gl_id = expense_gl.id
         last_gl_id = expense_gl_id
+
+        interest_payable = create_general_ledger_account(db=db, type_id=liability_type_id, name=interest_payable_gl_name, account_number=generate_internal_gl_number(type_code=liability_account_code, last_id=last_gl_id), created_by=created_by, authorized_by=authorized_by)
+        interest_payable_gl_id = interest_payable.id
+        last_gl_id = interest_payable_gl_id
     elif product_type == 4:
         #loan
         reporting_gl = create_general_ledger_account(db=db, type_id=liability_type_id, name=reporting_gl_name, account_number=generate_internal_gl_number(type_code=liability_account_code, last_id=last_gl_id), created_by=created_by, authorized_by=authorized_by)
@@ -161,7 +165,7 @@ def create_product_gls(db: Session, product: FinancialProduct, created_by: int=0
         'data': data
     }
 
-def create_new_financial_product(db: Session, name: str=None, description: str=None, product_type: int=0, user_type: int=0, individual_compliance_type: int=0, merchant_compliance_type: int=0, interest_rate: float=0, overdrawn_interest_rate: float=0, charge_if_overdrawn: float=0, charges: float=0, cot_rate: float=0, minimum_amount: float=0, maximum_amount: float=0, liquidation_penalty: float=0, tenure: int=0, interest_tenure_type: int = 0, interest_tenure_data: str = None, guarantor_requirement: int=0, amount_to_require_guarantor: float=0, created_by: int=0, authorized_by: int=0):
+def create_new_financial_product(db: Session, name: str=None, description: str=None, product_type: int=0, user_type: int=0, individual_compliance_type: int=0, merchant_compliance_type: int=0, interest_rate: float=0, overdrawn_interest_rate: float=0, charge_if_overdrawn: float=0, charges: float=0, cot_rate: float=0, minimum_amount: float=0, maximum_amount: float=0, liquidation_penalty: float=0, tenure: int=0, interest_tenure_type: int = 0, interest_tenure_data: str = None, guarantor_requirement: int=0, amount_to_require_guarantor: float=0, instant_interest_pay_status: int=0, created_by: int=0, authorized_by: int=0):
     country_id = 0
     currency_id = 0
     country = get_single_country_by_code(db=db, code="NG")
@@ -170,7 +174,7 @@ def create_new_financial_product(db: Session, name: str=None, description: str=N
     currency = get_single_currency_by_code(db=db, code="NGN")
     if currency is not None:
         currency_id = currency.id
-    product = create_financial_product(db=db, name=name, description=description, country_id=country_id, currency_id=currency_id, product_type=product_type, user_type=user_type, individual_compliance_type=individual_compliance_type, merchant_compliance_type=merchant_compliance_type, interest_rate=interest_rate, overdrawn_interest_rate=overdrawn_interest_rate, charge_if_overdrawn=charge_if_overdrawn, charges=charges, cot_rate=cot_rate, minimum_amount=minimum_amount, maximum_amount=maximum_amount, liquidation_penalty=liquidation_penalty, tenure=tenure, interest_tenure_type=interest_tenure_type, interest_tenure_data=json.dumps(interest_tenure_data), guarantor_requirement=guarantor_requirement, amount_to_require_guarantor=amount_to_require_guarantor, status=1, created_by=created_by, authorized_by=authorized_by)
+    product = create_financial_product(db=db, name=name, description=description, country_id=country_id, currency_id=currency_id, product_type=product_type, user_type=user_type, individual_compliance_type=individual_compliance_type, merchant_compliance_type=merchant_compliance_type, interest_rate=interest_rate, overdrawn_interest_rate=overdrawn_interest_rate, charge_if_overdrawn=charge_if_overdrawn, charges=charges, cot_rate=cot_rate, minimum_amount=minimum_amount, maximum_amount=maximum_amount, liquidation_penalty=liquidation_penalty, tenure=tenure, interest_tenure_type=interest_tenure_type, interest_tenure_data=json.dumps(interest_tenure_data), guarantor_requirement=guarantor_requirement, amount_to_require_guarantor=amount_to_require_guarantor, instant_interest_pay_status=instant_interest_pay_status, status=1, created_by=created_by, authorized_by=authorized_by)
     resp = create_product_gls(db=db, product=product, created_by=created_by, authorized_by=authorized_by)
     resp_data = resp['data']
     values = {

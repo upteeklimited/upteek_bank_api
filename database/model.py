@@ -1,5 +1,6 @@
 from typing import Dict
 from sqlalchemy.orm import Session
+from models.account_balances import Account_Balance, create_account_balance, update_account_balance, delete_account_balance, force_delete_account_balance, get_single_account_balance_by_id, get_account_balances
 from models.account_types import AccountType, create_account_type, update_account_type, delete_account_type, force_delete_account_type, get_single_account_type_by_id, get_single_account_type_by_product_id, get_last_account_type, get_single_account_type_by_account_code, get_account_types
 from models.accounts import Account, create_account, update_account, delete_account, force_delete_account, get_single_account_by_id, get_just_single_account_by_id, get_single_account_by_account_number, get_last_account, get_single_user_primary_account, get_accounts, filter_accounts, search_accounts, count_accounts, sum_of_account_balances
 from models.addresses import Address, create_address, update_address, delete_address, force_delete_address, get_single_address_by_id, get_addresses, get_addresses_by_addressable_type, get_addressable
@@ -10,7 +11,7 @@ from models.bills import Bill, create_bill, update_bill, delete_bill, force_dele
 from models.cards import Card, create_card, update_card, delete_card, force_delete_card, get_single_card_by_id, get_cards
 from models.categories import Category, create_category, update_category, delete_category, force_delete_category, get_single_category_by_id, get_single_category_by_slug, get_categories
 from models.cities import City, create_city, update_city, delete_city, force_delete_city, get_single_city_by_id, get_capital_city, get_cities, get_cities_by_state_id
-from models.collections import Collection, create_collection, update_collection, delete_collection, force_delete_collection, get_single_collection_by_id, get_collections_by_loan_id, get_collections, sum_of_overdue_collections, count_collection_loan_id_collected_at
+from models.collections import Collection, create_collection, update_collection, delete_collection, force_delete_collection, get_single_collection_by_id, get_collections_by_loan_id, get_collections, get_collections_by_collected_at, sum_of_overdue_collections, count_collection_loan_id_collected_at, count_collection_loan_id_status
 from models.compliance_usages import ComplianceUsage, create_compliance_usage, update_complaince_usage, delete_compliance_usage, force_delete_compliance_usage, get_single_complaince_usage_by_id, get_complaince_usages
 from models.countries_currencies import CountryCurrency, create_country_currency, update_country_currency, delete_country_currency, force_delete_country_currency, get_single_country_currency_by_id, get_countries_currencies, get_countries_currencies_by_country_id, get_countries_currencies_by_currency_id
 from models.countries import Country, create_country, update_country, delete_country, force_delete_country, get_single_country_by_id, get_single_country_by_code, get_countries
@@ -159,6 +160,42 @@ def credit_account(db: Session, account_id: int=0, amount: float=0):
         'data': {
             'available_balance': available_balance,
             'ledger_balance': ledger_balance
+        }
+    }
+
+def debit_account_accrued(db: Session, account_id: int=0, amount: float=0):
+    account = get_just_single_account_by_id(db=db, id=account_id)
+    if account is None:
+        return {
+            'status': False,
+            'message': 'Account not found',
+            'data': None,
+        }
+    accrued_balance = account.accrued_balance - amount
+    update_account(db=db, id=account_id, values={'accrued_balance': accrued_balance})
+    return {
+        'status': True,
+        'message': 'Success',
+        'data': {
+            'accrued_balance': accrued_balance,
+        }
+    }
+
+def credit_account_accrued(db: Session, account_id: int=0, amount: float=0):
+    account = get_just_single_account_by_id(db=db, id=account_id)
+    if account is None:
+        return {
+            'status': False,
+            'message': 'Account not found',
+            'data': None,
+        }
+    accrued_balance = account.accrued_balance + amount
+    update_account(db=db, id=account_id, values={'accrued_balance': accrued_balance})
+    return {
+        'status': True,
+        'message': 'Success',
+        'data': {
+            'accrued_balance': accrued_balance,
         }
     }
 

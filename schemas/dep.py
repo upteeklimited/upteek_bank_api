@@ -22,6 +22,7 @@ class DepositModel(BaseModel):
     rollover_at_maturity: Optional[int] = None
     liquidation_charge: Optional[float] = None
     rollover_count: Optional[int] = None
+    paid_interest_status: Optional[int] = None
     status: Optional[int] = None  # 0 -> pending, 1 -> active, 2 -> closed, 3 -> cancelled.
     created_at: Optional[datetime] = None
     account: Optional[AccountInfoModel] = None
