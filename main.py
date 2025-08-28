@@ -7,13 +7,16 @@ from fastapi_pagination import add_pagination
 import sys, traceback
 import os
 import redis.asyncio as redis
+from settings.config import load_env_config
+
+config = load_env_config()
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 sys.path.append(BASEDIR)
 
 # Create a Redis connection pool (async)
-redis_client = redis.from_url("redis://localhost:6379", decode_responses=True)
+redis_client = redis.from_url(f"redis://:{config['redis_password']}@localhost:6379", decode_responses=True)
 
 from routers.authentication import auth
 from routers import dashboard

@@ -59,5 +59,6 @@ def load_env_config():
         'mailtrap_url': os.getenv('MAILTRAP_URL'),
         'mailtrap_from_email': os.getenv('MAILTRAP_FROM_EMAIL'),
         'mailtrap_from_name': os.getenv('MAILTRAP_FROM_NAME'),
+        'redis_password': os.getenv('REDIS_PASSWORD'),
     }
 
