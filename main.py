@@ -6,11 +6,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
 import sys, traceback
 import os
+import redis.asyncio as redis
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 sys.path.append(BASEDIR)
 
+# Create a Redis connection pool (async)
+redis_client = redis.from_url("redis://localhost:6379", decode_responses=True)
 
 from routers.authentication import auth
 from routers import dashboard
@@ -76,6 +79,26 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {"message": "Hello World! Upteek Bank"}
+
+@app.on_event("startup")
+async def startup_event():
+    # Test connection on startup
+    await redis_client.set("startup_check", "FastAPI is connected")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    # Close connection
+    await redis_client.close()
+
+@app.get("/cache/{key}")
+async def get_cache(key: str):
+    value = await redis_client.get(key)
+    return {"key": key, "value": value}
+
+@app.post("/cache/{key}")
+async def set_cache(key: str, value: str):
+    await redis_client.set(key, value, ex=60)  # store with TTL=60s
+    return {"status": "saved"}
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):

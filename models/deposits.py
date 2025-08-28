@@ -105,6 +105,9 @@ def get_deposits(db: Session, filters: Dict={}):
         query = query.filter_by(account_id = filters['status'])
     return query.order_by(desc(Deposit.created_at))
 
+def get_deposits_by_status(db: Session, status: int=0):
+    return db.query(Deposit).filter(Deposit.status == status).all()
+
 def sum_of_deposits(db: Session, filters: Dict={}):
     query = db.query(func.sum(Deposit.amount))
     if 'user_id' in filters:
