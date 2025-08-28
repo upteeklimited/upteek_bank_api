@@ -8,13 +8,13 @@ import sys, traceback
 import os
 import redis.asyncio as redis
 
-config = load_env_config()
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 sys.path.append(BASEDIR)
 
 from settings.config import load_env_config
+config = load_env_config()
 
 # Create a Redis connection pool (async)
 redis_client = redis.from_url(f"redis://:{config['redis_password']}@localhost:6379", decode_responses=True)
