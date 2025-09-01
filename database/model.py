@@ -37,6 +37,7 @@ from models.media import Medium, create_medium, update_medium, delete_medium, fo
 from models.merchant_categories import MerchantCategory, create_merchant_category, update_merchant_category, delete_merchant_category, force_delete_merchant_category, get_single_merchant_category_by_id, get_merchant_categories, get_merchant_categories_by_industry_id
 from models.merchant_industries import MerchantIndustry, create_merchant_industry, update_merchant_industry, delete_merchant_industry, force_delete_merchant_industry, get_single_merchant_industry_by_id, get_merchant_industries
 from models.merchants import Merchant, create_merchant, update_merchant, delete_merchant, force_delete_merchant, get_single_merchant_by_id, get_single_merchant_by_user_id, get_merchants, get_merchants_by_category_id
+from models.merchants_users import Merchant_User, create_merchant_user, update_merchant_user, delete_merchant_user, force_delete_merchant_user, get_single_merchant_user_by_id, get_merchants_users
 from models.messages import Message, create_message, update_message, delete_message, force_delete_message, get_all_messages
 from models.notifications import Notification, create_notification, update_notification, delete_notification, force_delete_notification, get_all_notifications
 from models.operators import Operator, create_operator, update_operator, delete_operator, force_delete_operator, get_single_operator_by_id, get_operators
