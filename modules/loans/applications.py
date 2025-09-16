@@ -273,7 +273,7 @@ def do_authorizer_loan_application_approval(db: Session, user_id: int=0, loan_ap
             }
         else:
             loan_acct_name = "Loan Account #" + rand_upper_string_generator()
-            loan_acc_req = create_new_customer_account(db=db, user_id=user_id, merchant_id=customer_user.merchant_id, account_type_id=account_type.id, account_name=loan_acct_name)
+            loan_acc_req = create_new_customer_account(db=db, user_id=user_id, merchant_id=loan_application.merchant_id, account_type_id=account_type.id, account_name=loan_acct_name)
             if loan_acc_req['status'] == False:
                 return {
                     'status': False,
