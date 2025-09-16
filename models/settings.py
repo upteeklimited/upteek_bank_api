@@ -17,13 +17,14 @@ class Setting(Base):
     email_notification = Column(SmallInteger, default=0)
     sms_notification = Column(SmallInteger, default=0)
     dashboard_state = Column(Text, nullable=True)
+    interest_state = Column(Text, nullable=True)
     deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
 
-def create_setting(db: Session, user_id: int = 0, email_notification: int = 0, sms_notification: int = 0, commit: bool=False):
-    setting = Setting(user_id=user_id, email_notification=email_notification, sms_notification=sms_notification, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_setting(db: Session, user_id: int = 0, email_notification: int = 0, sms_notification: int = 0, dashboard_state: str = None, interest_state: str=None, commit: bool=False):
+    setting = Setting(user_id=user_id, email_notification=email_notification, sms_notification=sms_notification, dashboard_state=dashboard_state, interest_state=interest_state, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
     db.add(setting)
     if commit == False:
         db.flush()

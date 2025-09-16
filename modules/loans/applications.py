@@ -288,7 +288,7 @@ def do_authorizer_loan_application_approval(db: Session, user_id: int=0, loan_ap
             interest = loan_application.interest_amount
             # interest = round(interest, 2)
             currency_id = financial_product.currency_id
-            loan = create_loan(db=db, user_id=customer_user.id, merchant_id=customer_user.merchant_id, application_id=loan_application_id, account_id=account.id, loan_account_id=loan_account_id, gl_account_id=financial_product.gl_id, amount=loan_application.amount, unpaid_principal=loan_application.amount, unearned_interest=interest, status=1)
+            loan = create_loan(db=db, user_id=customer_user.id, merchant_id=loan_application.merchant_id, application_id=loan_application_id, account_id=account.id, loan_account_id=loan_account_id, gl_account_id=financial_product.gl_id, amount=loan_application.amount, unpaid_principal=loan_application.amount, unearned_interest=interest, status=1)
             da = debit_account(db=db, account_id=loan_account_id, amount=loan_application.amount, override=True)
             if da['status'] == False:
                 return {
