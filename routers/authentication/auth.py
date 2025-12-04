@@ -14,7 +14,7 @@ async def login_email(request: Request, fields: LoginEmailRequest, db: Session =
     req = login_with_email(db=db, email=fields.email, password=fields.password, fbt=fields.fbt)
     return req
 
-@router.post("/send_token_email", response_model=PlainResponse, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
+@router.post("/send_token_email", response_model=PlainResponseData, responses={404: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 403: {"model": ErrorResponse}})
 async def send_token_email(request: Request, fields: SendEmailTokenRequest, db: Session = Depends(get_db)):
     req = send_email_token(db=db, email=fields.email)
     return req
