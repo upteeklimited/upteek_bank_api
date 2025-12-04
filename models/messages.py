@@ -13,6 +13,7 @@ class Message(Base):
     __tablename__ = "messages"
      
     id = Column(BigInteger, primary_key=True, index=True)
+    conversation_id = Column(BigInteger, default=0)
     sender_user_id = Column(BigInteger, default=0)
     receiver_user_id = Column(BigInteger, default=0)
     previous_message_id = Column(BigInteger, default=0)
@@ -28,8 +29,9 @@ class Message(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
 
-def create_message(db: Session, sender_user_id: int = 0, receiver_user_id: int = 0, previous_message_id: int = 0, parent_id: int = 0, invoice_request_id: int = 0, invoice_id: int = 0, reference: str = None, title: str = None, body: str = None, attached_file: str = None, status: int = 0, commit: bool=False):
-    message = Message(sender_user_id=sender_user_id, receiver_user_id=receiver_user_id, previous_message_id=previous_message_id, parent_id=parent_id, invoice_request_id=invoice_request_id, invoice_id=invoice_id, reference=reference, title=title, body=body, attached_file=attached_file, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+def create_message(db: Session, conversation_id: int = 0, sender_user_id: int = 0, receiver_user_id: int = 0, previous_message_id: int = 0, parent_id: int = 0, invoice_request_id: int = 0, invoice_id: int = 0, reference: str = None, title: str = None, body: str = None, attached_file: str = None, status: int = 0, commit: bool=False):
+    message = Message(conversation_id=conversation_id, sender_user_id=sender_user_id, receiver_user_id=receiver_user_id, previous_message_id=previous_message_id, parent_id=parent_id, invoice_request_id=invoice_request_id, invoice_id=invoice_id, reference=reference, title=title, body=body, attached_file=attached_file, status=status, created_at=get_laravel_datetime(), updated_at=get_laravel_datetime())
+    db.add(message)
     if commit == False:
         db.flush()
     else:
@@ -68,6 +70,10 @@ def force_delete_message(db: Session, id: int=0, commit: bool=False):
 
 def get_all_messages(db: Session, filters: Dict={}):
     query = db.query(Message)
+    if 'conversation_id' in filters:
+        query = query.filter_by(conversation_id = filters['conversation_id'])
+    if 'reference' in filters:
+        query = query.filter_by(reference = filters['reference'])
     if 'sender_user_id' in filters:
         query = query.filter_by(sender_user_id = filters['sender_user_id'])
     if 'receiver_user_id' in filters:

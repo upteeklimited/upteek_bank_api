@@ -18,6 +18,7 @@ import inspect
 import models
 import traceback
 import re
+import uuid
 
 config = load_env_config()
 
@@ -37,12 +38,13 @@ def generate_transaction_reference(tran_type: str = None, rand_type: int = 1, ra
     dt = datetime.now()
     ts = datetime.timestamp(dt)
     ts = int(ts)
-    if rand_type == 1:
-        return str(tran_type).upper() + "_" + rand_string_generator(size=rand_size) + "_" + str(ts)
-    elif rand_type == 2:
-        return str(tran_type).upper() + "_" + rand_upper_string_generator(size=rand_size) + "_" + str(ts)
-    elif rand_type == 3:
-        return str(tran_type).upper() + "_" + rand_lower_string_generator(size=rand_size) + "_" + str(ts)
+    return f"{uuid.uuid4().hex[:7]}_{ts}"
+    # if rand_type == 1:
+    #     return str(tran_type).upper() + "_" + rand_string_generator(size=rand_size) + "_" + str(ts)
+    # elif rand_type == 2:
+    #     return str(tran_type).upper() + "_" + rand_upper_string_generator(size=rand_size) + "_" + str(ts)
+    # elif rand_type == 3:
+    #     return str(tran_type).upper() + "_" + rand_lower_string_generator(size=rand_size) + "_" + str(ts)
 
 def generate_basic_reference(rand_size: int=10):
     dt = datetime.now()

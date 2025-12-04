@@ -45,12 +45,14 @@ class AuthHandler():
 
     def encode_token(self, user: Dict={}, device_token: str = None):
         payload = {
-            'exp': datetime.now() + timedelta(days=365, minutes=5),
-            'iat': datetime.now(),
+            'exp': datetime.utcnow() + timedelta(days=365),
+            'iat': datetime.utcnow(),
             'sub': json.dumps(user)
         }
-        expired_at = (datetime.now() + timedelta(days=365, minutes=5)).strftime("%Y/%m/%d %H:%M:%S")
+        expired_at = (datetime.utcnow() + timedelta(days=365)).strftime("%Y/%m/%d %H:%M:%S")
         token = jwt.encode(payload, self.secret, algorithm="HS256")
+        if isinstance(token, bytes):
+            token = token.decode('utf-8')
         user_id = user['id']
         update_user_auth_token(db=self.db, user_id=user_id, values={'status': 0}, commit=True)
         create_auth_token(db=self.db, user_id=user_id, token=token, device_token=device_token, status=1, expired_at=expired_at, commit=True)
@@ -58,6 +60,8 @@ class AuthHandler():
 
     def decode_token(self, token: str = None):
         try:
+            if isinstance(token, bytes):
+                token = token.decode('utf-8')
             payload = jwt.decode(token, self.secret, algorithms=["HS256"])
             sub_data = json.loads(payload['sub'])
             user_id = sub_data['id']
